@@ -1,0 +1,87 @@
+body, html {
+	font-size: 12px;
+}
+
+#tabs {
+	width: 900px;
+	height: 400px;
+}
+
+.before,
+.after {
+	width: 300px;
+	height: 300px;
+}
+
+/* Before and after slider */
+#before-after {
+	width: 300px;
+	height: 300px;
+	position: relative;
+	top: 25px;
+	left: 300px;
+}
+
+#before-after .before,
+#before-after .after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+}
+
+#before-after .before { 
+	z-index: 50;
+}
+#before-after .after {
+	width: 150px;
+	z-index: 100;
+}
+
+.slider {
+	top: 320px;
+}
+
+/* Side by side */
+#side-by-side {
+	width: 900px;
+	height: 300px;
+	margin-top: 25px;
+}
+
+#side-by-side .before,
+#side-by-side .after {
+	float: left;
+	margin-left: 100px;
+}
+
+/* opacity slider + toggle */
+#opacity, #toggle {
+	width: 300px;
+	height: 300px;
+	position: relative;
+	top: 25px;
+	left: 300px;
+}
+
+#opacity .before,
+#opacity .after,
+#toggle .before,
+#toggle .after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+}
+
+#opacity .after {
+	opacity: 0.5;
+}
+
+#toggle .after {
+	visibility: visible;
+}
+
+/* reset jquery ui styles */
+.ui-tabs .ui-tabs-panel { padding: 0; }
+.ui-widget-content { border: none;}

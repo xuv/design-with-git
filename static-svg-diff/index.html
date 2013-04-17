@@ -9,130 +9,8 @@
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 	<script src="js/jquery.svg.placeholder.js"></script>
-
-	<script type="text/javascript">
-	  $(function(){
-	  	// create SVG place holders
-	    $('img[data-ph]').tsPlaceHold();
-	    // UI: create tabs
-	    $( "#tabs" ).tabs();
-
-	    $( "#before-after .slider" ).slider({
-	    	min : 0,
-	    	max : 300,
-	    	value : 150,  
-			slide: function( event, ui ) {
-				$('#before-after .after').css('width', ui.value);
-			}
-		});
-
-		$( "#opacity .slider" ).slider({
-	    	min : 0,
-	    	max : 100,
-	    	value : 50,  
-			slide: function( event, ui ) {
-				$('#opacity .after').css('opacity', ui.value/100);
-			}
-		});
-
-		$( "#toggle" ).mouseenter(function(){
-			$('#toggle .after').css('visibility', 'hidden');
-		}).mouseleave(function(){
-			$('#toggle .after').css('visibility', 'visible');
-		});
-	  })
-	</script>
-
-	<style type="text/css">
-		body, html {
-			font-size: 12px;
-		}
-
-		#tabs {
-			width: 900px;
-			height: 400px;
-		}
-
-		.before,
-		.after {
-			width: 300px;
-			height: 300px;
-		}
-
-		/* Before and after slider */
-		#before-after {
-			width: 300px;
-			height: 300px;
-			position: relative;
-			top: 25px;
-			left: 300px;
-		}
-
-		#before-after .before,
-		#before-after .after {
-			position: absolute;
-			top: 0;
-			left: 0;
-			overflow: hidden;
-		}
-
-		#before-after .before { 
-			z-index: 50;
-		}
-		#before-after .after {
-			width: 150px;
-			z-index: 100;
-		}
-
-		.slider {
-			top: 320px;
-		}
-
-		/* Side by side */
-		#side-by-side {
-			width: 900px;
-			height: 300px;
-			margin-top: 25px;
-		}
-
-		#side-by-side .before,
-		#side-by-side .after {
-			float: left;
-			margin-left: 100px;
-		}
-
-		/* opacity slider + toggle */
-		#opacity, #toggle {
-			width: 300px;
-			height: 300px;
-			position: relative;
-			top: 25px;
-			left: 300px;
-		}
-
-		#opacity .before,
-		#opacity .after,
-		#toggle .before,
-		#toggle .after {
-			position: absolute;
-			top: 0;
-			left: 0;
-			overflow: hidden;
-		}
-
-		#opacity .after {
-			opacity: 0.5;
-		}
-
-		#toggle .after {
-			visibility: visible;
-		}
-
-		/* reset jquery ui styles */
-		.ui-tabs .ui-tabs-panel { padding: 0; }
-		.ui-widget-content { border: none;}
-
-	</style>
+	<script src="js/main.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/main.css">
 
 </head>
 <body>
@@ -144,26 +22,26 @@
 			<li><a href="#toggle">Toggle</a></li>
 		</ul>
 		<div id="before-after" class="images">
-			<img data-ph="200:200:first commit" class="before">
+			<img src="img/a.svg" class="before">
 			<div class="after">
 				<div width="300" height="300" style="width: 300px; height: 300px">
-					<img data-ph="200:200:second commit">
+					<img src="img/b.svg" style="width: 300px; height: 300px">
 				</div>
 			</div>
 			<div class="slider"></div>
 		</div>
 		<div id="side-by-side" class="images">
-			<img data-ph="200:200:first commit" class="before">
-			<img data-ph="200:200:second commit" class="after">
+			<img src="img/a.svg" class="before">
+			<img src="img/b.svg" class="after">
 		</div>
 		<div id="opacity" class="images">
-			<img data-ph="200:200:first commit" class="before">
-			<img data-ph="200:200:second commit" class="after">
+			<img src="img/a.svg" class="before">
+			<img src="img/b.svg" class="after">
 			<div class="slider"></div>
 		</div>
 		<div id="toggle" class="images">
-			<img data-ph="200:200:first commit" class="before">
-			<img data-ph="200:200:second commit" class="after">
+			<img src="img/a.svg" class="before">
+			<img src="img/b.svg" class="after">
 		</div>
 	</div>
 
