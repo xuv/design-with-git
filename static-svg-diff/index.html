@@ -8,8 +8,12 @@
 
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
-	<script src="js/jquery.svg.placeholder.js"></script>
+	<script src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script> 
+	<script src="js/canvg.js"></script> 
+	<script src="js/context_blender.js"></script>
+	<script src="js/timeline-min.js"></script>
 	<script src="js/main.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/timeline.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 
 </head>
@@ -20,6 +24,7 @@
 			<li><a href="#side-by-side">Side by side</a></li>
 			<li><a href="#opacity">Opacity</a></li>
 			<li><a href="#toggle">Toggle</a></li>
+			<li><a href="#blend-diff">Pixel Diff</a></li>
 		</ul>
 		<div id="before-after" class="images">
 			<img src="img/a.svg" class="before">
@@ -43,7 +48,15 @@
 			<img src="img/a.svg" class="before">
 			<img src="img/b.svg" class="after">
 		</div>
+		<div id="blend-diff" class="images">
+			<img src="img/a.svg" class="before">
+			<img src="img/b.svg" class="after">
+			<canvas id="under" width="300" height="300"></canvas>
+			<canvas id="over"></canvas>
+		</div>
 	</div>
+
+	<div id="commit-timeline"></div>
 
 </body>
 </html
