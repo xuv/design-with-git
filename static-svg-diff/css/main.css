@@ -105,9 +105,22 @@ body, html {
 .ui-widget-content { border: none;}
 
 /* reset timeline styles */
+#commit-timeline {
+	font-family: sans-serif;
+}
+
  .thumb img {
  	height: 40px;
+ 	border: solid 1px #808080;
  }
+
+.th-before img {
+	border: solid 1px red;	
+}
+
+.th-after img {
+	border: solid 1px green;
+}
 
 .thumb span {
 	display: none;

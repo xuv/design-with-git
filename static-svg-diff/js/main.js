@@ -28,13 +28,17 @@ $(function(){
 		$('#toggle .after').css('visibility', 'visible');
 	});
 
-	canvg('under', $('#blend-diff .before').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
-	canvg('over', $('#blend-diff .after').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
+	var pixelDiff = function() {
+		canvg('under', $('#blend-diff .before').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
+		canvg('over', $('#blend-diff .after').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
 
-	var over = document.getElementById('over').getContext('2d');
-	var under = document.getElementById('under').getContext('2d');
+		var over = document.getElementById('over').getContext('2d');
+		var under = document.getElementById('under').getContext('2d');
 
-	over.blendOnto(under,'difference');
+		over.blendOnto(under,'difference');
+	}
+
+	pixelDiff();
 
 	/*
 	var c = document.getElementById('under');
@@ -84,6 +88,8 @@ $(function(){
 		width:  "100%",
 		height: "auto",
 		layout: "box",
+		style: "dot",
+		selectable: "true",
 		eventMargin: 0,  // minimal margin between events
 		eventMarginAxis: 0, // minimal margin beteen events and the axis
 		groupsOnRight: false
@@ -93,4 +99,39 @@ $(function(){
 	timeline.draw(data, options);
 
 	$( '#commit-timeline' ).tooltip();
+
+	function getSelectedRow() {
+        var row = undefined;
+        var sel = timeline.getSelection();
+        if (sel.length) {
+            if (sel[0].row != undefined) {
+                row = sel[0].row;
+            }
+        }
+        return row;
+    }
+
+    var target = '.before';
+	var onSelect = function (event) {
+		var index = getSelectedRow();
+		itemData = timeline.getItem(index);
+		console.log(itemData);
+		timeline.changeItem(index, itemData, false);
+		var json = mapDOM(itemData.content, false)
+		var svguri = json.attributes.src;
+
+    	$(target).each(function(){
+    		$(this).attr('src', svguri);
+    	});
+
+    	if ( target === '.before') { 
+    		target = '.after';
+    	} else {
+    		target = '.before';
+    	}
+    	pixelDiff();
+    }
+
+	links.events.addListener(timeline, "select", onSelect);
+
 })
