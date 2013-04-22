@@ -23,7 +23,7 @@ body, html {
 }
 
 #before-after .before,
-#before-after .after {
+#before-after #mask {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -33,7 +33,7 @@ body, html {
 #before-after .before { 
 	z-index: 50;
 }
-#before-after .after {
+#before-after #mask {
 	width: 150px;
 	z-index: 100;
 }
@@ -111,16 +111,18 @@ body, html {
 
  .thumb img {
  	height: 40px;
- 	border: solid 1px #808080;
+ 	border: solid 1px #97B0F8; /* color taken from time-line-event border */
  }
 
-.th-before img {
-	border: solid 1px red;	
+div.timeline-event-selected {
+    background-color: transparent;
 }
 
-.th-after img {
-	border: solid 1px green;
-}
+.th-before img { border: solid 1px #F00; }
+.th-before div.timeline-event-dot { border-color: #F00; }
+
+.th-after img { border: solid 1px #0F0; }
+.th-after div.timeline-event-dot { border-color: #0F0; }
 
 .thumb span {
 	display: none;

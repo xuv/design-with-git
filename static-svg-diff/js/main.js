@@ -9,7 +9,7 @@ $(function(){
 		max : 300,
 		value : 150,  
 		slide: function( event, ui ) {
-			$('#before-after .after').css('width', ui.value);
+			$('#before-after #mask').css('width', ui.value);
 		}
 	});
 
@@ -101,34 +101,36 @@ $(function(){
 	$( '#commit-timeline' ).tooltip();
 
 	function getSelectedRow() {
-        var row = undefined;
-        var sel = timeline.getSelection();
-        if (sel.length) {
-            if (sel[0].row != undefined) {
-                row = sel[0].row;
+            var row = undefined;
+            var sel = timeline.getSelection();
+            if (sel.length) {
+                if (sel[0].row != undefined) {
+                    row = sel[0].row;
+                }
             }
+            return row;
         }
-        return row;
-    }
 
-    var target = '.before';
+    /* Selection of an element in the timeline */
+    var target = ".before"
 	var onSelect = function (event) {
-		var index = getSelectedRow();
-		itemData = timeline.getItem(index);
-		console.log(itemData);
-		timeline.changeItem(index, itemData, false);
-		var json = mapDOM(itemData.content, false)
+		var i = getSelectedRow();
+		var json = mapDOM(data[i].content, false)
 		var svguri = json.attributes.src;
-
     	$(target).each(function(){
     		$(this).attr('src', svguri);
     	});
 
-    	if ( target === '.before') { 
+    	if (target === '.before') {
+    		$('.th-before').removeClass('th-before');
+    		$('.timeline-event-selected').addClass('th-before');
     		target = '.after';
     	} else {
+    		$('.th-after').removeClass('th-after');
+    		$('.timeline-event-selected').addClass('th-after');
     		target = '.before';
     	}
+
     	pixelDiff();
     }
 
