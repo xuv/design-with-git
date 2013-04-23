@@ -1,5 +1,6 @@
 body, html {
 	font-size: 12px;
+	/*background: red;*/
 }
 
 #tabs {
@@ -56,7 +57,10 @@ body, html {
 }
 
 /* opacity slider + toggle + blend diff */
-#opacity, #toggle, #blend-diff {
+#opacity,
+#toggle,
+#blend-diff,
+#pippin-diff {
 	width: 300px;
 	height: 300px;
 	position: relative; 
@@ -90,19 +94,39 @@ body, html {
 }
 
 #blend-diff #under,
-#blend-diff #over  {
+#blend-diff #over,
+#pippin-diff #pippinUnder,
+#pippin-diff #pippinOver {
 	width: 300px;
 	height: 300px;
 }
 
 
-#blend-diff #over {
+#blend-diff #under,
+#blend-diff #over,
+#pippin-diff #pippinUnder {
+	display: none;
+}
+
+#svg-diff .json {
+	border: solid 1px #CCC;
+	width: 700px;
+	height: 300px;
+	overflow: auto;
+	margin: 25px auto;
+}
+
+#svg-diff .jsondiffpatch-unchanged {
 	display: none;
 }
 
 /* reset jquery ui styles */
 .ui-tabs .ui-tabs-panel { padding: 0; }
-.ui-widget-content { border: none;}
+.ui-widget-content { 
+	border: none;
+	background: transparent;
+}
+
 
 /* reset timeline styles */
 #commit-timeline {

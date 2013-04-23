@@ -1,9 +1,106 @@
+/* Global Variable */
+// JSON data convert from SVG files 
+
+/* Pixel Diff 
+ * First, renders each SGV into its own Canvas, then does a pixel diff between both
+ */
+
+var pixelDiff = function() {
+	canvg('under', $('#blend-diff .before').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
+	canvg('over', $('#blend-diff .after').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
+
+	var over = document.getElementById('over').getContext('2d');
+	var under = document.getElementById('under').getContext('2d');
+
+	under.blendOnto(over,'difference');
+
+	$('#blend-diff #over').show();
+}
+
+var pippinDiff = function() {
+	canvg('pippinUnder', $('#blend-diff .before').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
+	canvg('pippinOver', $('#blend-diff .after').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
+
+	var pippinOver = document.getElementById('pippinOver').getContext('2d');
+	var pippinUnder = document.getElementById('pippinUnder').getContext('2d');
+
+	pippinUnder.blendOnto(pippinOver,'difference-pippin');
+}
+
+
+/* Load an XML (SVG) file and convert it to JSON */
+/*
+var loadAndConvertXML = function( url ) { 
+	var jsonData;
+	$.ajax({
+	    url: url,
+	    dataType:"xml"
+	}).done(function(xmlData){
+	    jsonData = $.xmlToJSON(xmlData);
+	    console.log(url);
+	    console.dir(jsonData);
+	    return jsonData;
+	});
+}
+
+var initJSONSVGs = function() {
+	var urlSVGbefore = $('#blend-diff .before').attr('src');
+	var urlSVGafter = $('#blend-diff .after').attr('src'); 
+	jsonBefore = loadAndConvertXML(urlSVGbefore);
+	jsonAfter = loadAndConvertXML(urlSVGafter);
+}
+*/
+
+var svgDiff = {};
+
+var loadAndCompareSVG = function(){
+	var jsonBefore, jsonAfter;
+	var url2svg1 = $('#blend-diff .before').attr('src');
+	var url2svg2 = $('#blend-diff .after').attr('src');
+
+	$.when(
+		$.ajax({
+		    url: url2svg1,
+		    dataType:"xml"
+		}).done(function(xmlData){
+		    jsonBefore = $.xmlToJSON(xmlData);
+		    // console.dir(jsonBefore);
+		}),
+		$.ajax({
+		    url: url2svg2,
+		    dataType:"xml"
+		}).done(function(xmlData){
+		    jsonAfter = $.xmlToJSON(xmlData);
+		    // console.dir(jsonAfter);
+		})
+	).done(function(){
+		/* Node Diff
+		 * Convert each SVG to a JSON object and compare them
+		 */
+		svgDiff = jsondiffpatch.diff(jsonBefore, jsonAfter);
+		console.log("SVG DIFF");
+		// console.dir(svgDiff);
+		//console.log(JSON.stringify(svgDiff));
+		if (svgDiff != undefined) {
+			$('#svg-diff .json').empty().append(jsondiffpatch.html.diffToHtml(jsonBefore, jsonAfter, svgDiff));
+		} else {
+			$('#svg-diff .json').empty().append("No difference.");
+		}
+	});
+}
+
 $(function(){
-	// create SVG place holders
-	// $('img[data-ph]').tsPlaceHold();
 	// UI: create tabs
 	$( "#tabs" ).tabs();
 
+	/*
+	$( "#svg-diff-tab" ).click( function() {
+		console.log("clicked");
+		loadAndCompareSVG();
+	});
+	*/
+
+	/* init before-after slider */
 	$( "#before-after .slider" ).slider({
 		min : 0,
 		max : 300,
@@ -13,6 +110,7 @@ $(function(){
 		}
 	});
 
+	/* init opacity slider */
 	$( "#opacity .slider" ).slider({
 		min : 0,
 		max : 100,
@@ -22,23 +120,15 @@ $(function(){
 		}
 	});
 
+
 	$( "#toggle" ).mouseenter(function(){
 		$('#toggle .after').css('visibility', 'hidden');
 	}).mouseleave(function(){
 		$('#toggle .after').css('visibility', 'visible');
 	});
 
-	var pixelDiff = function() {
-		canvg('under', $('#blend-diff .before').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
-		canvg('over', $('#blend-diff .after').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
-
-		var over = document.getElementById('over').getContext('2d');
-		var under = document.getElementById('under').getContext('2d');
-
-		over.blendOnto(under,'difference');
-	}
-
 	pixelDiff();
+	pippinDiff();
 
 	/*
 	var c = document.getElementById('under');
@@ -46,6 +136,7 @@ $(function(){
 	ctx.drawSvg($('#blend-diff .before').attr('src'), 0, 0, 300, 150);
 	*/
 
+	/* Simulate git commit log for svg file to be rendered in Timeline */
 	var data = [];
 	/*
 	data.push({
@@ -83,7 +174,7 @@ $(function(){
 	  'className' : 'thumb'
 	});
 
-
+	/* Options for the Timeline */
 	var options = {
 		width:  "100%",
 		height: "auto",
@@ -95,28 +186,31 @@ $(function(){
 		groupsOnRight: false
 	};
 
+	/* Init Timeline */
 	var timeline = new links.Timeline(document.getElementById('commit-timeline'));
 	timeline.draw(data, options);
 
 	$( '#commit-timeline' ).tooltip();
 
+	/* Return the index of the selected element in the timeline */
 	function getSelectedRow() {
-            var row = undefined;
-            var sel = timeline.getSelection();
-            if (sel.length) {
-                if (sel[0].row != undefined) {
-                    row = sel[0].row;
-                }
+        var row = undefined;
+        var sel = timeline.getSelection();
+        if (sel.length) {
+            if (sel[0].row != undefined) {
+                row = sel[0].row;
             }
-            return row;
         }
+        return row;
+    }
 
     /* Selection of an element in the timeline */
     var target = ".before"
 	var onSelect = function (event) {
 		var i = getSelectedRow();
-		var json = mapDOM(data[i].content, false)
-		var svguri = json.attributes.src;
+		// xml to JSON
+		var json =  $.xmlToJSON(data[i].content);
+		var svguri = json.img['@src'];
     	$(target).each(function(){
     		$(this).attr('src', svguri);
     	});
@@ -132,8 +226,13 @@ $(function(){
     	}
 
     	pixelDiff();
+    	pippinDiff();
+    	loadAndCompareSVG();
+
     }
 
 	links.events.addListener(timeline, "select", onSelect);
 
+	/* SVG diff */
+	loadAndCompareSVG();
 })

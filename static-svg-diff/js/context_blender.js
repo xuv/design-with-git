@@ -31,7 +31,7 @@ if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype.getIma
 			sA  = src[px+3]/255;
 			dA  = dst[px+3]/255;
 			dA2 = (sA + dA - sA*dA);
-			dst[px+3] = dA2*255;
+//			dst[px+3] = dA2*255;
 
 			sRA = src[px  ]/255*sA;
 			dRA = dst[px  ]/255*dA;
@@ -63,10 +63,57 @@ if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype.getIma
 					dst[px+2] = (sBA*dBA + sBA*(1-dA) + dBA*(1-sA)) * demultiply;
 				break;
 
+				case 'difference-gray':
+				    {
+                      var diff = Math.sqrt(
+                      	                     (src[px+0]-dst[px+0])*(src[px+0]-dst[px+0]) +
+                      	                     (src[px+1]-dst[px+1])*(src[px+1]-dst[px+1]) +
+                      	                     (src[px+2]-dst[px+2])*(src[px+2]-dst[px+2]) +
+                      	                     (src[px+3]-dst[px+3])*(src[px+3]-dst[px+3])
+                      	                   );
+
+	                  var gray = diff/2;
+	                  
+	                    {
+	                      dst[px  ] = gray;
+	                      dst[px+1] = gray;
+	                      dst[px+2] = gray;
+	                      dst[px+3] = Math.max(src[px+3], dst[px+3]);
+	                    }
+				    }
+				break;
+
+				case 'difference-pippin':
+				    {
+                      var squared_diff = Math.abs(src[px+0]-dst[px+0]) +
+                                         Math.abs(src[px+1]-dst[px+1]) +
+                                         Math.abs(src[px+2]-dst[px+2]) +
+                                         Math.abs(src[px+3]-dst[px+3]);
+
+	                  var gray = (dst[px] + dst[px + 1] + dst[px + 2]) / 3;
+	                  
+	                  if (squared_diff > 0)
+	                    {
+	                    	// black changed pixels are slightly red
+                           dst[px] = ((gray + 32) * 255) / (255-32);
+                           dst[px+1] = 0;
+                           dst[px+2] = 0;
+	                    }
+	                  else
+	                    {
+	                      dst[px] = gray;
+	                      dst[px+1] = gray;
+	                      dst[px+2] = gray;
+	                    }
+	                   dst[px+3] = Math.max(src[px+3], dst[px+3]);
+				    }
+				break;
+
 				case 'difference':
 					dst[px  ] = (sRA + dRA - 2 * Math.min( sRA*dA, dRA*sA )) * demultiply;
 					dst[px+1] = (sGA + dGA - 2 * Math.min( sGA*dA, dGA*sA )) * demultiply;
 					dst[px+2] = (sBA + dBA - 2 * Math.min( sBA*dA, dBA*sA )) * demultiply;
+					dst[px+3] = Math.max(src[px+3], dst[px+3]);
 				break;
 
 				// ******* Slightly different from Photoshop, where alpha is concerned
