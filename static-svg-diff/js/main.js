@@ -61,8 +61,19 @@ var loadAndCompareSVG = function(){
 	$.when(
 		$.ajax({
 		    url: url2svg1,
-		    dataType:"xml"
+		    dataType:"text"
 		}).done(function(xmlData){
+			//console.log(xmlData);
+			var drawBefore = SVG('svg-before').size(300, 300);
+			drawBefore.svg(xmlData);
+
+			/*
+			$('#svg-diff div.before').empty().append($(xmlData));
+			$('#svg-diff div.before svg').attr({
+				'width' : '300px',
+				'height' : '300px'
+			});
+			*/
 		    jsonBefore = $.xmlToJSON(xmlData);
 		    // console.dir(jsonBefore);
 		}),
@@ -78,7 +89,6 @@ var loadAndCompareSVG = function(){
 		 * Convert each SVG to a JSON object and compare them
 		 */
 		svgDiff = jsondiffpatch.diff(jsonBefore, jsonAfter);
-		console.log("SVG DIFF");
 		// console.dir(svgDiff);
 		//console.log(JSON.stringify(svgDiff));
 		if (svgDiff != undefined) {
