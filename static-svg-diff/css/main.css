@@ -112,7 +112,7 @@ body, html {
 
 #svg-diff .json {
 	border: solid 1px #CCC;
-	width: 400px;
+	width: 500px;
 	height: 300px;
 	overflow: auto;
 	margin: 25px auto 0 100px;
@@ -127,9 +127,18 @@ body, html {
 #svg-diff .after {
 	position: absolute;
 	top: 65px;
-	left: 525px;
+	left: 625px;
 	border: solid 1px #808080;
 	z-index: 55;
+}
+
+#svg-diff svg {
+	position: absolute; 
+	top:0; 
+	left:0;
+	width: 100%; 
+	height: 100%;
+
 }
 
 /* reset jquery ui styles */

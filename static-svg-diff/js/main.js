@@ -53,6 +53,7 @@ var initJSONSVGs = function() {
 
 var svgDiff = {};
 
+
 var loadAndCompareSVG = function(){
 	var jsonBefore, jsonAfter;
 	var url2svg1 = $('#blend-diff .before').attr('src');
@@ -64,8 +65,22 @@ var loadAndCompareSVG = function(){
 		    dataType:"text"
 		}).done(function(xmlData){
 			//console.log(xmlData);
+			
+			$('#svg-before').empty().append($(xmlData));
+			
+			//$('#5-before svg').attr('viewBox', '0 0 300 300');
+			
+			$('#svg-before svg').removeAttr('height');
+			$('#svg-before svg').removeAttr('width');
+			
+			// svg.js code
+			/*
+			$('#svg-before').empty();
 			var drawBefore = SVG('svg-before').size(300, 300);
 			drawBefore.svg(xmlData);
+			drawBefore.viewbox(0, 0, 400, 400);
+			//SVG.get('path3760').hide();
+			*/
 
 			/*
 			$('#svg-diff div.before').empty().append($(xmlData));
@@ -79,10 +94,16 @@ var loadAndCompareSVG = function(){
 		}),
 		$.ajax({
 		    url: url2svg2,
-		    dataType:"xml"
+		    dataType:"text"
 		}).done(function(xmlData){
 		    jsonAfter = $.xmlToJSON(xmlData);
 		    // console.dir(jsonAfter);
+		    /*
+		    // svg.js code
+		    $('#svg-after').empty();
+			var drawAfter = SVG('svg-after').size(300, 300);
+			drawAfter.svg(xmlData);
+			*/
 		})
 	).done(function(){
 		/* Node Diff
