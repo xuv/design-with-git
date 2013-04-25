@@ -133,12 +133,7 @@ body, html {
 }
 
 #svg-diff svg {
-	position: absolute; 
-	top:0; 
-	left:0;
-	width: 100%; 
-	height: 100%;
-
+	transform: scale(0.75) translate(-67px, -67px);
 }
 
 /* reset jquery ui styles */

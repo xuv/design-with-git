@@ -66,7 +66,7 @@ var loadAndCompareSVG = function(){
 		}).done(function(xmlData){
 			//console.log(xmlData);
 			
-			// $('#svg-before').empty().append($(xmlData));
+			$('#svg-before').empty().append($(xmlData));
 			
 			//$('#5-before svg').attr('viewBox', '0 0 300 300');
 			
@@ -74,13 +74,13 @@ var loadAndCompareSVG = function(){
 			// $('#svg-before svg').removeAttr('width');
 			
 			// svg.js code
-			
+			/*
 			$('#svg-before').empty();
 			var drawBefore = SVG('svg-before').size(300, 300);
 			drawBefore.svg(xmlData);
 			drawBefore.viewbox(0, 0, 400, 400);
 			//SVG.get('path3760').hide();
-			
+			*/
 
 			/*
 			$('#svg-diff div.before').empty().append($(xmlData));
