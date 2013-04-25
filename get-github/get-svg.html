@@ -12,6 +12,7 @@
 	<div id="textarea"></div>
 </body>
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="js/base64.js"></script>
 <script src="js/underscore.js"></script>
 <script src="js/gh3.js"></script>
 <script>
@@ -48,15 +49,21 @@
 
 						        svgFile.eachCommit(function (commit) {
 						            $.getJSON( commit.url, function(data) {
-						            	rawContent.append(
-						            		'<li>' +
-						            		data.commit.author.name + ' says:  "' +
-						            		data.commit.message +'" at ' +
-						            		data.commit.author.date + '<br> <img src="' +
-						            		data.files[0].raw_url + '">'
-						            	);
+						            	
+						            	$.getJSON( data.files[0].contents_url, function(svg_e){
+						            			var svg = Base64.decode(svg_e.content);
 
-										// console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
+						            			rawContent.append(
+								            		'<li>' +
+								            		data.commit.author.name + ' says:  "' +
+								            		data.commit.message +'" at ' +
+								            		data.commit.author.date + '<br>' +
+								            		svg
+								            	);
+						            		});
+						            	
+
+										 console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
 									});
 						        });
 							});
