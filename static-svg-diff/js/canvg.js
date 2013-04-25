@@ -822,7 +822,7 @@
 				svg.Mouse.checkPath(this, ctx);
 				if (ctx.fillStyle != '') ctx.fill();
 
-				/* Code taken from http://code.google.com/p/canvg/issues/detail?id=52#c4 */
+				/* Code taken and modified from http://code.google.com/p/canvg/issues/detail?id=52#c4 */
 				if (ctx.strokeStyle != '') { 
 					if (this.style('stroke-dasharray').hasValue()) {
 						var dashGapArray = this.style('stroke-dasharray').value.split(',');
@@ -832,8 +832,13 @@
 								ctx.mozDash = lengths;
 								ctx.mozDashOffset = 2;
 							} else if (navigator.userAgent.indexOf("WebKit") >= 0) {
-								ctx.webkitLineDash = lengths;
-								ctx.webkitLineDashOffset = 2;
+								// ctx.webkitLineDash = lengths;
+								// ctx.webkitLineDashOffset = 2;
+								ctx.setLineDash(lengths);
+								ctx.lineDashOffset = 2;
+							} else {
+								ctx.setLineDash(lengths);
+								ctx.lineDashOffset = 2;
 							}
 						}
 					}
