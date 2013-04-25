@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>gh3</title>
+    
+</head>
+<body>
+	<h1></h1>
+	<h2></h2>
+	<ul></ul>
+	<div id="textarea"></div>
+</body>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="js/underscore.js"></script>
+<script src="js/gh3.js"></script>
+<script>
+
+	var
+	 xuv = new Gh3.User("xuv")
+	,	repoTitle = $("h1")
+	,	branchTitle = $("h2")
+	,	branchContents = $("ul")
+	,	rawContent = $("#textarea");
+
+	var svgGitDummy = new Gh3.Repository("svg-git-dummy", xuv);
+
+	svgGitDummy.fetch(function (err, res) {
+		if(err) { throw "outch ..." }
+		repoTitle.html(svgGitDummy.full_name);
+
+		svgGitDummy.fetchBranches(function (err, res) {
+			if(err) { throw "outch ..." }
+
+			svgGitDummy.eachBranch(function (branch) {
+				branch.fetchContents(function (err, res) {
+					if(err) { throw "outch ..." }
+
+					branch.eachContent(function (content) {
+						if (( content.type === "file" ) &&
+							( content.name.substring(content.name.lastIndexOf(".")) === '.svg' )) {
+						
+							var svgFile = content;
+							//console.log(svgFile);
+
+							svgFile.fetchCommits(function (err, res) {
+						        if(err) { throw "outch ..." }
+
+						        svgFile.eachCommit(function (commit) {
+						            $.getJSON( commit.url, function(data) {
+						            	rawContent.append(
+						            		'<li>' +
+						            		data.commit.author.name + ' says:  "' +
+						            		data.commit.message +'" at ' +
+						            		data.commit.author.date + '<br> <img src="' +
+						            		data.files[0].raw_url + '">'
+						            	);
+
+										// console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
+									});
+						        });
+							});
+						}
+					});
+				});
+			});
+		});
+	});
+/*
+
+			res.each({
+				var branch = svgGitDummy.getBranchByName(this.name); 
+
+			});
+			var master = svgGitDummy.getBranchByName("master");
+			branchTitle.html(master.name + " (" + master.sha + ") :");
+
+			master.fetchContents(function (err, res) {
+				if(err) { throw "outch ..." }
+
+				master.eachContent(function (content) {
+					branchContents.append('<li>'+content.name+" : "+content.type);
+
+				});
+
+				//var myfile = master.getContents()[8];
+
+				var myfile = master.getFileByName("index.html");
+
+				console.log("index.html", myfile);
+
+				myfile.fetchContent(function (err, res) {
+					if(err) { throw "outch ..." }
+
+					rawContent.text(myfile.getRawContent());
+				});
+
+				myfile.fetchCommits(function (err, res) {
+					if(err) { throw "outch ..." }
+						
+					console.log(myfile.getCommits()); 
+					
+					myfile.eachCommit(function (commit) {
+						console.log(commit.author.login, commit.message, commit.date);
+					});
+				});
+
+			});
+		})
+	});
+*/
+		
+</script>
+</html>

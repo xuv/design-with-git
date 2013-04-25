@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>gh3</title>
+    
+</head>
+<body>
+   <h2>Get file contents</h2>
+
+  <label>User</label> <input value="xuv" id="userName" />
+
+  <label>Repository Name</label> <input value="svg-git-dummy" id="repositoryName" />
+
+  <input type="button" value="Get Repository" onclick='getRep()' />
+
+  <h4>Branches</h4>
+  <ul id="branchesList">
+
+  </ul>
+
+  <h4>Files</h4>
+  <ul id="filesList">
+  </ul>
+
+  <h4>File Content</h4>
+  <div id="textarea" style="width: 80%;height: 500px;"></div>
+</textarea>
+
+</body>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="js/underscore.js"></script>
+<script src="js/gh3.js"></script>
+<script>
+
+	var branchesList = $("#branchesList");
+	var filesList = $("#filesList");
+	var rawContent = $("#textarea");
+	var scope = {};
+	var ghUser = new Gh3.User($("#userName")[0].value );
+	var ghRepository = new Gh3.Repository($("#repositoryName")[0].value, 
+		  																				ghUser);
+
+
+	var getRep = function(){
+		  ghRepository.fetch(function (err, res) {
+		  	ghRepository.fetchBranches(function (err, res) {
+		  		res.eachBranch( function(branch){
+		  			console.dir(branch);
+		  			branchesList.append('<li>'+branch.name);
+		  			branchesList.append("<input type=\"button\" value=\"Get Files for this Branch\" " +
+		  				"onclick=\"getBranch('" + branch.name +  "')\" />");
+		  		});
+
+				});
+			});
+	};
+
+	var getBranch = function(branchName){
+		scope.branch = ghRepository.getBranchByName(branchName);
+		scope.branch.fetchContents(function (err, res) {
+			if(err) { throw "outch ..." }
+			filesList.html("");
+			res.eachContent(function (content) {
+				console.dir(res);
+				filesList.append('<li>'+content.name);
+  			filesList.append("<input type=\"button\" value=\"Get File\" " +
+  				"onclick=\"getFile('" + content.name +  "')\" />");
+
+			});
+		});
+	};
+
+	var getFile = function(fileName){
+		myfile = scope.branch.getFileByName(fileName);
+
+
+				myfile.fetchContent(function (err, res) {
+					if(err) { throw "outch ..." }
+
+					rawContent.html(myfile.getRawContent());
+				});
+
+	};
+
+		
+</script>
+</html>
