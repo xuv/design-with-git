@@ -8,6 +8,10 @@ body, html {
 	height: 400px;
 }
 
+#file>div {
+	margin: 25px auto;
+}
+
 .before,
 .after {
 	width: 300px;
@@ -150,14 +154,18 @@ body, html {
 	font-family: sans-serif;
 }
 
- .thumb img {
+ .thumb .svg-thumb {
  	height: 40px;
+ 	width: 40px;
  	border: solid 1px #97B0F8; /* color taken from time-line-event border */
+ 	z-index: 20;
  }
 
+
 div.timeline-event-selected {
-    background-color: transparent;
+    background-color: white;
 }
+
 
 .th-before img { border: solid 1px #F00; }
 .th-before div.timeline-event-dot { border-color: #F00; }
@@ -165,6 +173,8 @@ div.timeline-event-selected {
 .th-after img { border: solid 1px #0F0; }
 .th-after div.timeline-event-dot { border-color: #0F0; }
 
+/*
 .thumb span {
 	display: none;
 }
+*/

@@ -6,81 +6,105 @@
     
 </head>
 <body>
-   <h2>Get file contents</h2>
-
-  <label>User</label> <input value="xuv" id="userName" />
-
-  <label>Repository Name</label> <input value="svg-git-dummy" id="repositoryName" />
-
-  <input type="button" value="Get Repository" onclick='getRep()' />
-
-  <h4>Branches</h4>
-  <ul id="branchesList">
-
-  </ul>
-
-  <h4>Files</h4>
-  <ul id="filesList">
-  </ul>
-
-  <h4>File Content</h4>
-  <div id="textarea" style="width: 80%;height: 500px;"></div>
-</textarea>
+	<div>
+		<label>Github user : </label>
+  		<input type="text" value="xuv" id="userName" title="Github user name"/>
+  		<label>repository : </label>
+		<input type="text" value="svg-git-dummy" id="repositoryName" title="Github repository name" />
+		<input type="button" value="Get Repository" onclick='getRep()' />
+	</div>
+	<div>
+		<ul id="filesList">
+		</ul>
+	</div>
 
 </body>
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="js/underscore.js"></script>
+<script src="js/base64.js"></script>
 <script src="js/gh3.js"></script>
 <script>
 
-	var branchesList = $("#branchesList");
+	
 	var filesList = $("#filesList");
-	var rawContent = $("#textarea");
-	var scope = {};
-	var ghUser = new Gh3.User($("#userName")[0].value );
-	var ghRepository = new Gh3.Repository($("#repositoryName")[0].value, 
-		  																				ghUser);
 
+	var files = [];
 
 	var getRep = function(){
-		  ghRepository.fetch(function (err, res) {
-		  	ghRepository.fetchBranches(function (err, res) {
+		var ghUser = new Gh3.User($("#userName")[0].value );
+		var ghRepository = new Gh3.Repository($("#repositoryName")[0].value, ghUser);
+		ghRepository.fetch(function (err, res) {
+			ghRepository.fetchBranches(function (err, res) {
 		  		res.eachBranch( function(branch){
-		  			console.dir(branch);
-		  			branchesList.append('<li>'+branch.name);
-		  			branchesList.append("<input type=\"button\" value=\"Get Files for this Branch\" " +
-		  				"onclick=\"getBranch('" + branch.name +  "')\" />");
-		  		});
-
+		  			// console.dir(branch);
+		  			branch.fetchContents(function (err, res) {
+						if(err) { throw "outch ..." }
+						res.eachContent(function (content) {
+							if (( content.type === "file" ) &&
+							( content.name.substring(content.name.lastIndexOf(".")) === '.svg' )) {
+								var svgFile = content;
+								console.log(files.length);
+								if (files.length === 0 ) {
+									files.push(svgFile);
+									filesList.append("<input type=\"button\" value=\"Get File\" " + "onclick=\"getFile('" + svgFile.name +  "')\" /> " + svgFile.name + "<br>");
+								} else {
+									for(i = 0; i < files.length; i++){
+										console.log
+										if (svgFile.name != files[i].name){
+											files.push(svgFile);
+											filesList.append("<input type=\"button\" value=\"Get File\" " + "onclick=\"getFile('" + svgFile.name +  "')\" /> " + svgFile.name + "<br>");
+										}
+									}
+								}
+							}
+						});
+					});
 				});
-			});
-	};
-
-	var getBranch = function(branchName){
-		scope.branch = ghRepository.getBranchByName(branchName);
-		scope.branch.fetchContents(function (err, res) {
-			if(err) { throw "outch ..." }
-			filesList.html("");
-			res.eachContent(function (content) {
-				console.dir(res);
-				filesList.append('<li>'+content.name);
-  			filesList.append("<input type=\"button\" value=\"Get File\" " +
-  				"onclick=\"getFile('" + content.name +  "')\" />");
-
 			});
 		});
 	};
 
-	var getFile = function(fileName){
-		myfile = scope.branch.getFileByName(fileName);
+	var getFileCommitHistoryData = function( svgFile ) {
+		svgFile.fetchCommits(function (err, res) {
+	        if(err) { throw "outch ..." }
 
+	        svgFile.eachCommit(function (commit) {
+	        	console.dir(commit);
 
-				myfile.fetchContent(function (err, res) {
-					if(err) { throw "outch ..." }
+	            $.getJSON( commit.url, function(data) {
+	            	
+	            	$.getJSON( data.files[0].contents_url, function(svg_e){
+	            			var svg = Base64.decode(svg_e.content);
+	            			console.dir(svg);
+	            			/*
+	            			rawContent.append(
+			            		'<li>' +
+			            		data.commit.author.name + ' says:  "' +
+			            		data.commit.message +'" at ' +
+			            		data.commit.author.date + '<br>' +
+			            		svg
+			            	);
+							*/
+	            		});
+	            	
 
-					rawContent.html(myfile.getRawContent());
+					 // console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
 				});
+	        });
+		});
+	}
 
+
+	var getFile = function(fileName){
+		for (i=0; i < files.length; i++){
+			if (files[i].name === fileName ){
+				files[i].fetchContent(function (err, res) {
+					if(err) { throw "outch ..." }
+					getFileCommitHistoryData(files[i]);
+				});
+				break;
+			}
+		}
 	};
 
 		

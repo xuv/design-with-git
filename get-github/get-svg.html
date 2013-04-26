@@ -2,12 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>gh3</title>
-	<style type="text/css">
-	svg {
-		transform: scale(0.5);
-	}
-</style>    
+    <title>gh3</title>  
 </head>
 <body>
 	<h1></h1>
@@ -29,7 +24,37 @@
 	,	branchContents = $("ul")
 	,	rawContent = $("#textarea");
 
+	var timelineData = {};
+
 	var svgGitDummy = new Gh3.Repository("svg-git-dummy", xuv);
+
+	var getFileCommitHistoryData = function( svgFile ) {
+		svgFile.fetchCommits(function (err, res) {
+	        if(err) { throw "outch ..." }
+
+	        svgFile.eachCommit(function (commit) {
+	        	console.dir(commit);
+
+	            $.getJSON( commit.url, function(data) {
+	            	
+	            	$.getJSON( data.files[0].contents_url, function(svg_e){
+	            			var svg = Base64.decode(svg_e.content);
+
+	            			rawContent.append(
+			            		'<li>' +
+			            		data.commit.author.name + ' says:  "' +
+			            		data.commit.message +'" at ' +
+			            		data.commit.author.date + '<br>' +
+			            		svg
+			            	);
+	            		});
+	            	
+
+					 // console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
+				});
+	        });
+		});
+	}
 
 	svgGitDummy.fetch(function (err, res) {
 		if(err) { throw "outch ..." }
@@ -38,9 +63,34 @@
 		svgGitDummy.fetchBranches(function (err, res) {
 			if(err) { throw "outch ..." }
 
+			console.log("Res branches");
+			console.dir(res);
+
+			$.each(res.branches, function(i, branch){
+				var name = branch.name;
+				
+				rawContent.append('<ul><li>' + name + '</li>');
+
+				branch.fetchContents(function (err, res) {
+					if(err) { throw "outch ..." }
+					branch.eachContent(function (content) {
+						if (( content.type === "file" ) &&
+							( content.name.substring(content.name.lastIndexOf(".")) === '.svg' )) {
+						
+							var svgFile = content;
+							console.dir(svgFile);
+
+							// getFileCommitHistoryData(svgFile);
+						}
+					});
+				});
+			});
+			/*
 			svgGitDummy.eachBranch(function (branch) {
 				branch.fetchContents(function (err, res) {
 					if(err) { throw "outch ..." }
+
+					console.log(branch.name);
 
 					branch.eachContent(function (content) {
 						if (( content.type === "file" ) &&
@@ -49,78 +99,14 @@
 							var svgFile = content;
 							//console.log(svgFile);
 
-							svgFile.fetchCommits(function (err, res) {
-						        if(err) { throw "outch ..." }
-
-						        svgFile.eachCommit(function (commit) {
-						            $.getJSON( commit.url, function(data) {
-						            	
-						            	$.getJSON( data.files[0].contents_url, function(svg_e){
-						            			var svg = Base64.decode(svg_e.content);
-
-						            			rawContent.append(
-								            		'<li>' +
-								            		data.commit.author.name + ' says:  "' +
-								            		data.commit.message +'" at ' +
-								            		data.commit.author.date + '<br>' +
-								            		svg
-								            	);
-						            		});
-						            	
-
-										 console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
-									});
-						        });
-							});
+							getFileCommitHistoryData(svgFile);
 						}
 					});
 				});
 			});
+			*/	
 		});
 	});
-/*
-
-			res.each({
-				var branch = svgGitDummy.getBranchByName(this.name); 
-
-			});
-			var master = svgGitDummy.getBranchByName("master");
-			branchTitle.html(master.name + " (" + master.sha + ") :");
-
-			master.fetchContents(function (err, res) {
-				if(err) { throw "outch ..." }
-
-				master.eachContent(function (content) {
-					branchContents.append('<li>'+content.name+" : "+content.type);
-
-				});
-
-				//var myfile = master.getContents()[8];
-
-				var myfile = master.getFileByName("index.html");
-
-				console.log("index.html", myfile);
-
-				myfile.fetchContent(function (err, res) {
-					if(err) { throw "outch ..." }
-
-					rawContent.text(myfile.getRawContent());
-				});
-
-				myfile.fetchCommits(function (err, res) {
-					if(err) { throw "outch ..." }
-						
-					console.log(myfile.getCommits()); 
-					
-					myfile.eachCommit(function (commit) {
-						console.log(commit.author.login, commit.message, commit.date);
-					});
-				});
-
-			});
-		})
-	});
-*/
 		
 </script>
 </html>
