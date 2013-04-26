@@ -27,32 +27,32 @@ var pippinDiff = function() {
 	pippinUnder.blendOnto(pippinOver,'difference-pippin');
 }
 
+/* Rescale SVG giving the container selector with CSS3 transforms */
+var svgScale = function( selector ) {
+	var svgWidth = $( selector + ' svg').attr('width');
+	var svgHeight = $( selector + ' svg').attr('height');
 
-/* Load an XML (SVG) file and convert it to JSON */
-/*
-var loadAndConvertXML = function( url ) { 
-	var jsonData;
-	$.ajax({
-	    url: url,
-	    dataType:"xml"
-	}).done(function(xmlData){
-	    jsonData = $.xmlToJSON(xmlData);
-	    console.log(url);
-	    console.dir(jsonData);
-	    return jsonData;
-	});
-}
+	var svgSize = Math.max(svgWidth, svgHeight);
+	console.log('svgSize: ' +svgSize);
 
-var initJSONSVGs = function() {
-	var urlSVGbefore = $('#blend-diff .before').attr('src');
-	var urlSVGafter = $('#blend-diff .after').attr('src'); 
-	jsonBefore = loadAndConvertXML(urlSVGbefore);
-	jsonAfter = loadAndConvertXML(urlSVGafter);
+	var containerWidth = $( selector ).width();
+	var containerHeight = $( selector ).height();
+
+	var containerSize = Math.min(containerWidth, containerHeight);
+	console.log('containerSize: ' + containerSize);
+
+	var scale = containerSize / svgSize;
+	var translation = (scale -1) * svgSize/2;
+	// Careful here. The order of transformations is important
+	if ( ($(selector).css('position') === 'absolute') && (navigator.userAgent.indexOf("WebKit") >= 0) ) {
+		// position: absolute; in parent container changes the translation origin in Chrome
+		$( selector + ' svg').css('transform', 'scale(' + scale + ')');
+	} else {
+		$( selector + ' svg').css('transform', 'translate(' + translation + 'px,' + translation + 'px) scale(' + scale + ')');
+	}
 }
-*/
 
 var svgDiff = {};
-
 
 var loadAndCompareSVG = function(){
 	var jsonBefore, jsonAfter;
@@ -63,55 +63,24 @@ var loadAndCompareSVG = function(){
 		$.ajax({
 		    url: url2svg1,
 		    dataType:"text"
-		}).done(function(xmlData){
-			//console.log(xmlData);
-			
+		}).done(function(xmlData){			
 			$('#svg-before').empty().append($(xmlData));
-			
-			//$('#5-before svg').attr('viewBox', '0 0 300 300');
-			
-			// $('#svg-before svg').removeAttr('height');
-			// $('#svg-before svg').removeAttr('width');
-			
-			// svg.js code
-			/*
-			$('#svg-before').empty();
-			var drawBefore = SVG('svg-before').size(300, 300);
-			drawBefore.svg(xmlData);
-			drawBefore.viewbox(0, 0, 400, 400);
-			//SVG.get('path3760').hide();
-			*/
-
-			/*
-			$('#svg-diff div.before').empty().append($(xmlData));
-			$('#svg-diff div.before svg').attr({
-				'width' : '300px',
-				'height' : '300px'
-			});
-			*/
 		    jsonBefore = $.xmlToJSON(xmlData);
-		    // console.dir(jsonBefore);
+		    svgScale('#svg-before');
 		}),
 		$.ajax({
 		    url: url2svg2,
 		    dataType:"text"
 		}).done(function(xmlData){
+			$('#svg-after').empty().append($(xmlData));
 		    jsonAfter = $.xmlToJSON(xmlData);
-		    // console.dir(jsonAfter);
-		    /*
-		    // svg.js code
-		    $('#svg-after').empty();
-			var drawAfter = SVG('svg-after').size(300, 300);
-			drawAfter.svg(xmlData);
-			*/
+		    svgScale('#svg-after');
 		})
 	).done(function(){
 		/* Node Diff
 		 * Convert each SVG to a JSON object and compare them
 		 */
 		svgDiff = jsondiffpatch.diff(jsonBefore, jsonAfter);
-		// console.dir(svgDiff);
-		//console.log(JSON.stringify(svgDiff));
 		if (svgDiff != undefined) {
 			$('#svg-diff .json').empty().append(jsondiffpatch.html.diffToHtml(jsonBefore, jsonAfter, svgDiff));
 		} else {
@@ -123,13 +92,6 @@ var loadAndCompareSVG = function(){
 $(function(){
 	// UI: create tabs
 	$( "#tabs" ).tabs();
-
-	/*
-	$( "#svg-diff-tab" ).click( function() {
-		console.log("clicked");
-		loadAndCompareSVG();
-	});
-	*/
 
 	/* init before-after slider */
 	$( "#before-after .slider" ).slider({
@@ -161,24 +123,8 @@ $(function(){
 	pixelDiff();
 	pippinDiff();
 
-	/*
-	var c = document.getElementById('under');
-	var ctx = c.getContext('2d');
-	ctx.drawSvg($('#blend-diff .before').attr('src'), 0, 0, 300, 150);
-	*/
-
 	/* Simulate git commit log for svg file to be rendered in Timeline */
 	var data = [];
-	/*
-	data.push({
-	  'start': new Date(2013, 3, 15),
-	  'end': new Date(2013, 3, 27),  // end is optional
-	  'content': 'Design with Git',
-	  'group': 'master'
-	  // Optional: a field 'className'
-	  // Optional: a field 'editable'
-	});
-	*/
 
 	data.push({
 	  'start': new Date(2013, 3, 16),

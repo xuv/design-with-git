@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Static SVG diff</title>
-
-	<link href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="stylesheet" media="screen">
-
+	<title>Design with Git</title>
 
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
@@ -20,6 +17,7 @@
 	<script src="js/timeline-min.js"></script>
 	<script src="js/main.js"></script>
 
+	<link href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="stylesheet" media="screen">
 	<link rel="stylesheet" type="text/css" href="css/timeline.css">
 	<link rel="stylesheet" type="text/css" href="css/jsondiffpatch.html.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
@@ -70,8 +68,10 @@
 		</div>
 		<div id="svg-diff" class="images">
 			<div class="json"></div>
-			<div id="svg-before" class="svg before"></div>
-			<div id="svg-after" class="svg after"></div>
+			<div id="viewer">
+				<div id="svg-before" class="svg before"></div>
+				<div id="svg-after" class="svg after"></div>
+			</div>
 		</div>
 	</div>
 
