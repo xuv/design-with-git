@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script type="text/javascript">
+
+/* Rescale SVG giving the container selector with CSS3 transforms */
+var svgScale = function( selector ) {
+	var svgWidth = $( selector + ' svg').attr('width');
+	var svgHeight = $( selector + ' svg').attr('height');
+
+	var svgSize = Math.max(svgWidth, svgHeight);
+	console.log('svgSize: ' +svgSize);
+
+	var containerWidth = $( selector ).width();
+	var containerHeight = $( selector ).height();
+
+	var containerSize = Math.min(containerWidth, containerHeight);
+	console.log('containerSize: ' + containerSize);
+
+	var scale = containerSize / svgSize;
+	var translation = (scale -1) * svgSize/2;
+	/* Careful here. The order of transformations is important */
+	if ( ($(selector).css('position') === 'absolute') && (navigator.userAgent.indexOf("WebKit") >= 0) ) {
+		/* don't knwo why but works. Maybe position absolute changes this */
+		$( selector + ' svg').css('transform', 'scale(' + scale + ')');
+	} else {
+		$( selector + ' svg').css('transform', 'translate(' + translation + 'px,' + translation + 'px) scale(' + scale + ')');
+	}
+}
+
+
+	$(function(){
+		$.ajax({
+		    url: "img/a.svg",
+		    dataType:"text"
+		}).done(function(xmlData){
+			//console.log(xmlData);
+			$('#canvas').empty().append($(xmlData));
+			svgScale('#canvas');
+		});
+	});
+	</script>
+</head>
+<body>
+	<div id="canvas" style="width: 200px; height: 200px; position: absolute; top: 65px; border: solid 1px gray; position: relative;"></div>
+	
+</body>
+
+</html>
