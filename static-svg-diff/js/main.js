@@ -76,7 +76,7 @@ var files = [];
 
 var timelineData = [];
 var timeline;
-var redraw = false;
+
 
 /* Options for the Timeline */
 var options = {
@@ -213,8 +213,8 @@ var getFile = function(fileName){
 
 
 var pixelDiff = function() {
-	canvg('under', $('#blend-diff .before').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
-	canvg('over', $('#blend-diff .after').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
+	canvg('under', $('#side-by-side div.before').html(), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
+	canvg('over', $('#side-by-side div.after').html(), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
 
 	var over = document.getElementById('over').getContext('2d');
 	var under = document.getElementById('under').getContext('2d');
@@ -225,8 +225,8 @@ var pixelDiff = function() {
 }
 
 var pippinDiff = function() {
-	canvg('pippinUnder', $('#blend-diff .before').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
-	canvg('pippinOver', $('#blend-diff .after').attr('src'), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
+	canvg('pippinUnder', $('#side-by-side div.before').html(), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
+	canvg('pippinOver', $('#side-by-side div.after').html(), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
 
 	var pippinOver = document.getElementById('pippinOver').getContext('2d');
 	var pippinUnder = document.getElementById('pippinUnder').getContext('2d');
@@ -279,25 +279,36 @@ var svgScale = function( el ) {
 	var scale = containerSize / svgSize;
 	var translation = (scale -1) * svgSize/2;
 	/* Careful here. The order of transformations is important */
-	if (jqo.hasClass('computed') != true) {
+	// if (jqo.hasClass('computed') != true) {
 		if ( (jqo.css('position') === 'absolute') && (navigator.userAgent.indexOf("WebKit") >= 0) ) {
 			/* don't know why but works. Maybe position absolute changes this */
 			s.css('transform', 'scale(' + scale + ')');
 		} else {
 			s.css('transform', 'translate(' + translation + 'px,' + translation + 'px) scale(' + scale + ')');
 		}
-	}
+	// }
 
-	jqo.addClass('computed');
+	// jqo.addClass('computed');
 }
 
 var svgDiff = {};
 
 var loadAndCompareSVG = function(){
 	var jsonBefore, jsonAfter;
-	var url2svg1 = $('#blend-diff .before').attr('src');
-	var url2svg2 = $('#blend-diff .after').attr('src');
+	var svg1 = $('#side-by-side div.before').html();
+	var svg2 = $('#side-by-side div.after').html();
+	
+	jsonBefore = $.xmlToJSON(svg1);
+	jsonAfter = $.xmlToJSON(svg2);
 
+	svgDiff = jsondiffpatch.diff(jsonBefore, jsonAfter);
+	if (svgDiff != undefined) {
+		$('#svg-diff .json').empty().append(jsondiffpatch.html.diffToHtml(jsonBefore, jsonAfter, svgDiff));
+	} else {
+		$('#svg-diff .json').empty().append("No difference.");
+	}
+
+	/*
 	$.when(
 		$.ajax({
 		    url: url2svg1,
@@ -316,9 +327,9 @@ var loadAndCompareSVG = function(){
 		    svgScale('#svg-after');
 		})
 	).done(function(){
-		/* Node Diff
-		 * Convert each SVG to a JSON object and compare them
-		 */
+		// Node Diff
+		// Convert each SVG to a JSON object and compare them
+		
 		svgDiff = jsondiffpatch.diff(jsonBefore, jsonAfter);
 		if (svgDiff != undefined) {
 			$('#svg-diff .json').empty().append(jsondiffpatch.html.diffToHtml(jsonBefore, jsonAfter, svgDiff));
@@ -326,11 +337,12 @@ var loadAndCompareSVG = function(){
 			$('#svg-diff .json').empty().append("No difference.");
 		}
 	});
+	*/
 }
 
 $(function(){
 	// UI: create tabs
-	$( "#tabs" ).tabs();
+	// $( "#tabs" ).tabs();
 
 	/* init before-after slider */
 	$( "#before-after .slider" ).slider({
@@ -353,8 +365,10 @@ $(function(){
 	});
 
 	/* place empty svg */
-	$('div.before').empty().append($(emptySVG));
-	$('div.after').empty().append($(emptySVG));
+	$('div.before, div.after').each(function(){
+		$(this).empty().append($(emptySVG));
+		svgScale(this);
+	});
 
 	$( "#toggle" ).mouseenter(function(){
 		$('#toggle .after').css('visibility', 'hidden');
@@ -370,13 +384,6 @@ $(function(){
 	timeline.draw(timelineData, options);
 
 	$( '#commit-timeline' ).tooltip();
-	$( '#commit-timeline' ).mouseenter(function(){
-		if (redraw) {
-			console.log('redraw');
-			timeline.draw(timelineData, options);
-			redraw = false;
-		}
-	});
 
 	/* Return the index of the selected element in the timeline */
 	function getSelectedRow() {
@@ -391,7 +398,7 @@ $(function(){
     }
 
     /* Selection of an element in the timeline */
-    var target = ".before"
+    var target = "div.before"
 	var onSelect = function (event) {
 		var i = getSelectedRow();
 		// xml to JSON
@@ -399,17 +406,19 @@ $(function(){
 		//var json =  $.xmlToJSON(timelineData[i].content);
 		//var svguri = json.img['@src'];
     	$(target).each(function(){
-    		$(this).attr('src', svguri);
+    		$(this).empty().append($(svg));
+			svgScale(this);
+			console.log("replaced");
     	});
 
-    	if (target === '.before') {
+    	if (target === 'div.before') {
     		$('.th-before').removeClass('th-before');
     		$('.timeline-event-selected').addClass('th-before');
-    		target = '.after';
+    		target = 'div.after';
     	} else {
     		$('.th-after').removeClass('th-after');
     		$('.timeline-event-selected').addClass('th-after');
-    		target = '.before';
+    		target = 'div.before';
     	}
 
     	pixelDiff();
