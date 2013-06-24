@@ -1,15 +1,81 @@
-/* Global Variable */
 // JSON data convert from SVG files 
 
+var emptySVG = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\
+<!-- Created with Inkscape (http://www.inkscape.org/) -->\
+<svg\
+   xmlns:dc="http://purl.org/dc/elements/1.1/"\
+   xmlns:cc="http://creativecommons.org/ns#"\
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"\
+   xmlns:svg="http://www.w3.org/2000/svg"\
+   xmlns="http://www.w3.org/2000/svg"\
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"\
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"\
+   width="200"\
+   height="200"\
+   id="svg2"\
+   version="1.1"\
+   inkscape:version="0.48.3.1 r9886"\
+   sodipodi:docname="Nouveau document 1">\
+  <defs\
+     id="defs4" />\
+  <sodipodi:namedview\
+     id="base"\
+     pagecolor="#ffffff"\
+     bordercolor="#666666"\
+     borderopacity="1.0"\
+     inkscape:pageopacity="0.0"\
+     inkscape:pageshadow="2"\
+     inkscape:zoom="3.115"\
+     inkscape:cx="61.476726"\
+     inkscape:cy="100"\
+     inkscape:document-units="px"\
+     inkscape:current-layer="layer1"\
+     showgrid="false"\
+     inkscape:window-width="1280"\
+     inkscape:window-height="776"\
+     inkscape:window-x="0"\
+     inkscape:window-y="24"\
+     inkscape:window-maximized="1" />\
+  <metadata\
+     id="metadata7">\
+    <rdf:RDF>\
+      <cc:Work\
+         rdf:about="">\
+        <dc:format>image/svg+xml</dc:format>\
+        <dc:type\
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />\
+        <dc:title></dc:title>\
+      </cc:Work>\
+    </rdf:RDF>\
+  </metadata>\
+  <g\
+     inkscape:label="Calque 1"\
+     inkscape:groupmode="layer"\
+     id="layer1"\
+     transform="translate(0,-852.36218)">\
+    <path\
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"\
+       d="M 0,0 200,200"\
+       id="path2985"\
+       inkscape:connector-curvature="0"\
+       transform="translate(0,852.36218)"\
+       sodipodi:nodetypes="cc" />\
+    <path\
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"\
+       d="M 0,1052.3622 200,852.36218"\
+       id="path2985-4"\
+       inkscape:connector-curvature="0"\
+       sodipodi:nodetypes="cc" />\
+  </g>\
+</svg>\
+';
 
 /* Get Github */
 
 var files = [];
 
 var timelineData = [];
-
 var timeline;
-
 var redraw = false;
 
 /* Options for the Timeline */
@@ -23,35 +89,6 @@ var options = {
 	eventMarginAxis: 0, // minimal margin beteen events and the axis
 	groupsOnRight: false
 };
-
-var svgScale = function( jqo ) {
-	var s = $(jqo.children('svg')[0]);
-	var svgWidth = s.attr('width');
-	var svgHeight = s.attr('height');
-
-	var svgSize = Math.max(svgWidth, svgHeight);
-	console.log('svgSize: ' +svgSize);
-
-	var containerWidth = jqo.width();
-	var containerHeight = jqo.height();
-
-	var containerSize = Math.min(containerWidth, containerHeight);
-	console.log('containerSize: ' + containerSize);
-
-	var scale = containerSize / svgSize;
-	var translation = (scale -1) * svgSize/2;
-	/* Careful here. The order of transformations is important */
-	if (jqo.hasClass('computed') != true) {
-		if ( (jqo.css('position') === 'absolute') && (navigator.userAgent.indexOf("WebKit") >= 0) ) {
-			/* don't knwo why but works. Maybe position absolute changes this */
-			s.css('transform', 'scale(' + scale + ')');
-		} else {
-			s.css('transform', 'translate(' + translation + 'px,' + translation + 'px) scale(' + scale + ')');
-		}
-	}
-
-	jqo.addClass('computed');
-}
 
 
 var getRep = function(){
@@ -69,13 +106,13 @@ var getRep = function(){
 						if (( content.type === "file" ) &&
 						( content.name.substring(content.name.lastIndexOf(".")) === '.svg' )) {
 							var svgFile = content;
-							console.log(files.length);
+							// console.log(files.length);
 							if (files.length === 0 ) {
 								files.push(svgFile);
 								filesList.append("<input type=\"button\" value=\"Get File\" " + "onclick=\"getFile('" + svgFile.name +  "')\" /> " + svgFile.name + "<br>");
 							} else {
 								for(i = 0; i < files.length; i++){
-									console.log
+									// console.log
 									if (svgFile.name != files[i].name){
 										files.push(svgFile);
 										filesList.append("<input type=\"button\" value=\"Get File\" " + "onclick=\"getFile('" + svgFile.name +  "')\" /> " + svgFile.name + "<br>");
@@ -99,56 +136,59 @@ var getFileCommitHistoryData = function( svgFile ) {
         if(err) { throw "outch ..." }
 
         svgFile.eachCommit(function (commit) {
-        	console.dir(commit);
+        	// console.dir(commit);
 
 
             $.getJSON( commit.url, function(data) {
             	
-            	$.getJSON( data.files[0].contents_url, function(svg_e){
-            			var svg = Base64.decode(svg_e.content);
-            			//console.dir(svg);
+            	var jqxhr = $.getJSON( data.files[0].contents_url, function(svg_e){
+        			var svg = Base64.decode(svg_e.content);
+        			//console.dir(svg);
 
-            			var tmp = 	'<div class="svg-thumb" style="width: 40px; height: 40px;">' +
-            						// '<span class="commit-message">' +
-            						// data.commit.message +
-            						// '</span>' +
-            						svg + 
-            						'</div>';
+        			var tmp = 	'<div class="svg-thumb" style="width: 40px; height: 40px;">' +
+        						// '<span class="commit-message">' +
+        						// data.commit.message +
+        						// '</span>' +
+        						svg + 
+        						'</div>';
 
-            			timeline.addItem({
-            				'start': new Date(commit.date),
-            				'content': tmp,
-            				'group': commit.author.name,
-							'className' : 'thumb'
-            			})
+        			timeline.addItem({
+        				'start': new Date(commit.date),
+        				'content': tmp,
+        				'group': commit.author.name,
+						'className' : 'thumb'
+        			});
 
-            			/*
-							data.push({
-							  'start': new Date(2013, 3, 17),
-							  // 'end': new Date(2013, 3, 27),  // end is optional
-							  'content': '<img src="img/b.svg" title="second commit" />',
-							  'group': 'master',
-							  'className' : 'thumb'
-							});
+        			
+					timelineData.push({
+					  'start': new Date(commit.date),
+					  'content': svg,
+					  'group': commit.author.name,
+					  'className' : 'thumb'
+					});
 
-            			rawContent.append(
-		            		'<li>' +
-		            		data.commit.author.name + ' says:  "' +
-		            		data.commit.message +'" at ' +
-		            		data.commit.author.date + '<br>' +
-		            		svg
-		            	);
-						*/
-            		});
-            	
-
-				 // console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
-			}).done(function(){
-				$('.svg-thumb').each(function(i, el){
-					console.log('scaling');
-					svgScale($(el));
+					/*
+        			rawContent.append(
+	            		'<li>' +
+	            		data.commit.author.name + ' says:  "' +
+	            		data.commit.message +'" at ' +
+	            		data.commit.author.date + '<br>' +
+	            		svg
+	            	);
+					*/
+        		});
+				console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
+				jqxhr.done(function(){
+					console.log('jqxhr-done');
+					$('.svg-thumb').each(function(i, el){
+						console.log('scaling');
+						svgScale(el);
+					});
+					// Seems the elements have to be visible to be resized as svg in the timeline. 
+					// I know, this is not a clear explanation of what's going on...
+					// But this is needed. 
+					timeline.setVisibleChartRangeAuto();
 				});
-				// redraw = true;
 			});
         });
 	});
@@ -197,7 +237,7 @@ var pippinDiff = function() {
 /* Rescale SVG giving the container selector with CSS3 transforms 
 var svgScale = function( selector ) {
 	var svgWidth = $( selector + ' svg').attr('width');
-	var svgHeight = $( selector + ' svg').attr('height');
+	var svgHeight = $( selector + ' svg').attr('height');s
 
 	var svgSize = Math.max(svgWidth, svgHeight);
 	console.log('svgSize: ' +svgSize);
@@ -220,6 +260,36 @@ var svgScale = function( selector ) {
 	}
 }
 */
+
+var svgScale = function( el ) {
+	var jqo = $(el);
+	var s = $(jqo.children('svg')[0]);
+	var svgWidth = s.attr('width');
+	var svgHeight = s.attr('height');
+
+	var svgSize = Math.max(svgWidth, svgHeight);
+	console.log('svgSize: ' +svgSize);
+
+	var containerWidth = jqo.width();
+	var containerHeight = jqo.height();
+
+	var containerSize = Math.min(containerWidth, containerHeight);
+	console.log('containerSize: ' + containerSize);
+
+	var scale = containerSize / svgSize;
+	var translation = (scale -1) * svgSize/2;
+	/* Careful here. The order of transformations is important */
+	if (jqo.hasClass('computed') != true) {
+		if ( (jqo.css('position') === 'absolute') && (navigator.userAgent.indexOf("WebKit") >= 0) ) {
+			/* don't know why but works. Maybe position absolute changes this */
+			s.css('transform', 'scale(' + scale + ')');
+		} else {
+			s.css('transform', 'translate(' + translation + 'px,' + translation + 'px) scale(' + scale + ')');
+		}
+	}
+
+	jqo.addClass('computed');
+}
 
 var svgDiff = {};
 
@@ -282,6 +352,9 @@ $(function(){
 		}
 	});
 
+	/* place empty svg */
+	$('div.before').empty().append($(emptySVG));
+	$('div.after').empty().append($(emptySVG));
 
 	$( "#toggle" ).mouseenter(function(){
 		$('#toggle .after').css('visibility', 'hidden');
@@ -291,36 +364,6 @@ $(function(){
 
 	pixelDiff();
 	pippinDiff();
-
-	/* Simulate git commit log for svg file to be rendered in Timeline */
-	/*
-	var data = [];
-
-	data.push({
-	  'start': new Date(2013, 3, 16),
-	  //'end': new Date(2013, 3, 16),  // end is optional
-	  'content': '<img src="img/a.svg" title="first commit" />',
-	  'group': 'master',
-	  'className' : 'thumb'
-	});
-
-
-	data.push({
-	  'start': new Date(2013, 3, 17),
-	  // 'end': new Date(2013, 3, 27),  // end is optional
-	  'content': '<img src="img/b.svg" title="second commit" />',
-	  'group': 'master',
-	  'className' : 'thumb'
-	});
-
-	data.push({
-	  'start': new Date(2013, 3, 18, 12, 20),
-	  // 'end': new Date(2013, 3, 27),  // end is optional
-	  'content': '<img src="img/c.svg" title="branch and commit" />',
-	  'group': 'julien',
-	  'className' : 'thumb'
-	});
-	*/
 
 	/* Init Timeline */
 	timeline = new links.Timeline(document.getElementById('commit-timeline'));
@@ -352,8 +395,9 @@ $(function(){
 	var onSelect = function (event) {
 		var i = getSelectedRow();
 		// xml to JSON
-		var json =  $.xmlToJSON(data[i].content);
-		var svguri = json.img['@src'];
+		var svg = timelineData[i].content; 
+		//var json =  $.xmlToJSON(timelineData[i].content);
+		//var svguri = json.img['@src'];
     	$(target).each(function(){
     		$(this).attr('src', svguri);
     	});
