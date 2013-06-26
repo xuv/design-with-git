@@ -177,7 +177,7 @@ var getFileCommitHistoryData = function( svgFile ) {
 	            	);
 					*/
         		});
-				console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
+				// console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
 				jqxhr.done(function(){
 					console.log('jqxhr-done');
 					$('.svg-thumb').each(function(i, el){
@@ -344,7 +344,13 @@ $(function(){
 	// UI: create tabs
 	// $( "#tabs" ).tabs();
 
-	/* init before-after slider */
+	$('#tabs a').click(function (e) {
+    	e.preventDefault();
+    	$(this).tab('show');
+    });
+
+	/*
+	// init before-after slider 
 	$( "#before-after .slider" ).slider({
 		min : 0,
 		max : 300,
@@ -353,8 +359,8 @@ $(function(){
 			$('#before-after #mask').css('width', ui.value);
 		}
 	});
-
-	/* init opacity slider */
+	
+	// init opacity slider 
 	$( "#opacity .slider" ).slider({
 		min : 0,
 		max : 100,
@@ -363,7 +369,7 @@ $(function(){
 			$('#opacity .after').css('opacity', ui.value/100);
 		}
 	});
-
+	*/
 	/* place empty svg */
 	$('div.before, div.after').each(function(){
 		$(this).empty().append($(emptySVG));
@@ -383,7 +389,7 @@ $(function(){
 	timeline = new links.Timeline(document.getElementById('commit-timeline'));
 	timeline.draw(timelineData, options);
 
-	$( '#commit-timeline' ).tooltip();
+	// $( '#commit-timeline' ).tooltip();
 
 	/* Return the index of the selected element in the timeline */
 	function getSelectedRow() {
@@ -405,12 +411,13 @@ $(function(){
 		var svg = timelineData[i].content; 
 		//var json =  $.xmlToJSON(timelineData[i].content);
 		//var svguri = json.img['@src'];
-    	$(target).each(function(){
+		
+    	$(".tab-content " + target).each(function(){
     		$(this).empty().append($(svg));
 			svgScale(this);
 			console.log("replaced");
     	});
-
+		
     	if (target === 'div.before') {
     		$('.th-before').removeClass('th-before');
     		$('.timeline-event-selected').addClass('th-before');
@@ -420,15 +427,17 @@ $(function(){
     		$('.timeline-event-selected').addClass('th-after');
     		target = 'div.before';
     	}
-
+    	/*
     	pixelDiff();
     	pippinDiff();
     	loadAndCompareSVG();
-
+		*/
     }
 
 	links.events.addListener(timeline, "select", onSelect);
 
-	/* SVG diff */
+	// SVG diff 
+	/*
 	loadAndCompareSVG();
+	*/
 })

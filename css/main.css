@@ -3,14 +3,17 @@ body, html {
 	/*background: red;*/
 }
 
+
 #tabs {
 	width: 100%;
 	height: 400px;
 }
 
+
 #file>div {
 	margin: 25px auto;
 }
+
 
 .before,
 .after {
@@ -18,7 +21,9 @@ body, html {
 	height: 300px;
 }
 
+
 /* Before and after slider */
+
 #before-after {
 	width: 300px;
 	height: 300px;

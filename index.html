@@ -2,9 +2,24 @@
 <html>
 <head>
 	<title>Design with Git</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Loading Bootstrap -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <!-- Loading Flat UI -->
+    <link href="css/flat-ui.css" rel="stylesheet">
+    <!-- Loading Timeline -->
+	<link rel="stylesheet" type="text/css" href="css/timeline.css">
+	<!-- Loading jsonDiffPatch -->
+	<link rel="stylesheet" type="text/css" href="css/jsondiffpatch.html.css">
+	<!-- Loading Design-with-git custom styles -->
+	<link rel="stylesheet" type="text/css" href="css/main______________.css">
 
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-select.js"></script>
+    <script src="js/bootstrap-switch.js"></script>
+
 	<script src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script> 
 	<script src="js/jquery.xml.min.js"></script>
 	<script src="js/jsondiffpatch.js"></script>
@@ -18,76 +33,79 @@
 	<script src="js/gh3.js"></script>
 	<script src="js/main.js"></script>
 
-	<link href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="stylesheet" media="screen">
-	<link rel="stylesheet" type="text/css" href="css/timeline.css">
-	<link rel="stylesheet" type="text/css" href="css/jsondiffpatch.html.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+    <![endif]-->
 
 </head>
 <body>
-	<div id="tabs">
-		<ul>
-			<li><a href="#file">File</a></li>
-			<li><a href="#side-by-side">Side by side</a></li>
-			<li><a href="#before-after">Slider</a></li>
-			<li><a href="#opacity">Opacity</a></li>
-			<li><a href="#toggle">Toggle</a></li>
-			<li><a href="#blend-diff">Pixel Diff</a></li>
-			<li><a href="#pippin-diff">Pippin Diff</a></li>
-			<li><a href="#svg-diff" id="svg-diff-tab">SVG Diff</a></li>
-		</ul>
-		<div id="file">
-			<div>
-				<label>Github user : </label>
-		  		<input type="text" value="xuv" id="userName" title="Github user name"/>
-		  		<label>repository : </label>
-				<input type="text" value="svg-git-dummy" id="repositoryName" title="Github repository name" />
-				<input type="button" value="Get Repository" onclick='getRep()' />
-			</div>
-			<div>
-				<ul id="filesList">
-				</ul>
-			</div>
-		</div>
-		<div id="side-by-side" class="images">
-			<div width="300" height="300" style="width: 300px; height: 300px" class="before"></div>
-			<div width="300" height="300" style="width: 300px; height: 300px" class="after"></div>
-		</div>
-		<div id="before-after" class="images">
-			<div width="300" height="300" style="width: 300px; height: 300px" class="before"></div>
-			<div id="mask">
-				<div width="300" height="300" style="width: 300px; height: 300px" class="after">
+	<div class="container">
+		<div id="tabs">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#file" data-toggle="tab">File</a></li>
+				<li><a href="#side-by-side" data-toggle="tab">Side by side</a></li>
+				<li><a href="#before-after" data-toggle="tab">Slider</a></li>
+				<li><a href="#opacity" data-toggle="tab">Opacity</a></li>
+				<li><a href="#toggle" data-toggle="tab">Toggle</a></li>
+				<li><a href="#blend-diff" data-toggle="tab">Pixel Diff</a></li>
+				<li><a href="#pippin-diff" data-toggle="tab">Pippin Diff</a></li>
+				<li><a href="#svg-diff" id="svg-diff-tab" data-toggle="tab">tab Diff</a></li>
+			</ul>
+			<div class="tab-content">
+				<div id="file" class="tab-pane active">
+					<div>
+						<label>Github user : </label>
+				  		<input type="text" value="xuv" id="userName" title="Github user name"/>
+				  		<label>repository : </label>
+						<input type="text" value="svg-git-dummy" id="repositoryName" title="Github repository name" />
+						<input type="button" value="Get Repository" onclick='getRep()' class="btn"/>
+					</div>
+					<div>
+						<ul id="filesList">
+						</ul>
+					</div>
+				</div>
+				<div id="side-by-side" class="images tab-pane">
+					<div width="300" height="300" style="width: 300px; height: 300px" class="before"></div>
+					<div width="300" height="300" style="width: 300px; height: 300px" class="after"></div>
+				</div>
+				<div id="before-after" class="images tab-pane">
+					<div width="300" height="300" style="width: 300px; height: 300px" class="before"></div>
+					<div id="mask">
+						<div width="300" height="300" style="width: 300px; height: 300px" class="after">
+						</div>
+					</div>
+					<div class="slider"></div>
+				</div>
+				<div id="opacity" class="images tab-pane">
+					<div width="300" height="300" style="width: 300px; height: 300px" class="before"></div>
+					<div width="300" height="300" style="width: 300px; height: 300px" class="after"></div>
+					<div class="slider"></div>
+				</div>
+				<div id="toggle" class="images tab-pane">
+					<div width="300" height="300" style="width: 300px; height: 300px" class="before"></div>
+					<div width="300" height="300" style="width: 300px; height: 300px" class="after"></div>
+				</div>
+				<div id="blend-diff" class="images tab-pane">
+					<canvas id="under"></canvas>
+					<canvas id="over"></canvas>
+				</div>
+				<div id="pippin-diff" class="images tab-pane">
+					<canvas id="pippinUnder"></canvas>
+					<canvas id="pippinOver"></canvas>
+				</div>
+				<div id="svg-diff" class="images tab-pane">
+					<div class="json"></div>
+					<div id="viewer">
+						<div id="svg-before" class="svg before"></div>
+						<div id="svg-after" class="svg after"></div>
+					</div>
 				</div>
 			</div>
-			<div class="slider"></div>
 		</div>
-		<div id="opacity" class="images">
-			<div width="300" height="300" style="width: 300px; height: 300px" class="before"></div>
-			<div width="300" height="300" style="width: 300px; height: 300px" class="after"></div>
-			<div class="slider"></div>
-		</div>
-		<div id="toggle" class="images">
-			<div width="300" height="300" style="width: 300px; height: 300px" class="before"></div>
-			<div width="300" height="300" style="width: 300px; height: 300px" class="after"></div>
-		</div>
-		<div id="blend-diff" class="images">
-			<canvas id="under"></canvas>
-			<canvas id="over"></canvas>
-		</div>
-		<div id="pippin-diff" class="images">
-			<canvas id="pippinUnder"></canvas>
-			<canvas id="pippinOver"></canvas>
-		</div>
-		<div id="svg-diff" class="images">
-			<div class="json"></div>
-			<div id="viewer">
-				<div id="svg-before" class="svg before"></div>
-				<div id="svg-after" class="svg after"></div>
-			</div>
-		</div>
+
+		<div id="commit-timeline"></div>
 	</div>
-
-	<div id="commit-timeline"></div>
-
 </body>
 </html
