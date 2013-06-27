@@ -13,24 +13,31 @@
 	<!-- Loading jsonDiffPatch -->
 	<link rel="stylesheet" type="text/css" href="css/jsondiffpatch.html.css">
 	<!-- Loading Design-with-git custom styles -->
-	<link rel="stylesheet" type="text/css" href="css/main______________.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
 
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap-select.js"></script>
     <script src="js/bootstrap-switch.js"></script>
 
-	<script src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script> 
+    <script src="js/canvg.js"></script> 
+	<script src="js/rgbcolor.js"></script> 
+	<script src="js/StackBlur.js"></script> 
+
 	<script src="js/jquery.xml.min.js"></script>
+	
 	<script src="js/jsondiffpatch.js"></script>
 	<script src="js/diff_match_patch_uncompressed.js"></script>
 	<script src="js/jsondiffpatch.html.js"></script>
-	<script src="js/canvg.js"></script> 
+	
 	<script src="js/context_blender.js"></script>
 	<script src="js/timeline-min.js"></script>
+	
 	<script src="js/underscore.js"></script>
 	<script src="js/base64.js"></script>
 	<script src="js/gh3.js"></script>
+	
 	<script src="js/main.js"></script>
 
 	<!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
@@ -41,6 +48,7 @@
 </head>
 <body>
 	<div class="container">
+		<div id="commit-timeline"></div>
 		<div id="tabs">
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#file" data-toggle="tab">File</a></li>
@@ -104,8 +112,6 @@
 				</div>
 			</div>
 		</div>
-
-		<div id="commit-timeline"></div>
 	</div>
 </body>
 </html

@@ -70,7 +70,7 @@ var emptySVG = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\
 </svg>\
 ';
 
-/* Get Github */
+// Get github
 
 var files = [];
 
@@ -78,7 +78,7 @@ var timelineData = [];
 var timeline;
 
 
-/* Options for the Timeline */
+// Options for the timeline
 var options = {
 	width:  "100%",
 	height: "auto",
@@ -90,7 +90,7 @@ var options = {
 	groupsOnRight: false
 };
 
-
+// fetch repository
 var getRep = function(){
 	var ghUser = new Gh3.User($("#userName")[0].value );
 	var ghRepository = new Gh3.Repository($("#repositoryName")[0].value, ghUser);
@@ -136,9 +136,7 @@ var getFileCommitHistoryData = function( svgFile ) {
         if(err) { throw "outch ..." }
 
         svgFile.eachCommit(function (commit) {
-        	// console.dir(commit);
-
-
+        	
             $.getJSON( commit.url, function(data) {
             	
             	var jqxhr = $.getJSON( data.files[0].contents_url, function(svg_e){
@@ -151,31 +149,20 @@ var getFileCommitHistoryData = function( svgFile ) {
         						// '</span>' +
         						svg + 
         						'</div>';
-
+        			// add element to the timeline
         			timeline.addItem({
         				'start': new Date(commit.date),
         				'content': tmp,
         				'group': commit.author.name,
 						'className' : 'thumb'
         			});
-
-        			
+        			// store data un a variable
 					timelineData.push({
 					  'start': new Date(commit.date),
 					  'content': svg,
 					  'group': commit.author.name,
 					  'className' : 'thumb'
 					});
-
-					/*
-        			rawContent.append(
-	            		'<li>' +
-	            		data.commit.author.name + ' says:  "' +
-	            		data.commit.message +'" at ' +
-	            		data.commit.author.date + '<br>' +
-	            		svg
-	            	);
-					*/
         		});
 				// console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
 				jqxhr.done(function(){
@@ -207,10 +194,8 @@ var getFile = function(fileName){
 	}
 };
 
-/* Pixel Diff 
- * First, renders each SGV into its own Canvas, then does a pixel diff between both
- */
-
+// *** Pixel Diff ***
+// First, renders each SGV into its own Canvas, then does a pixel diff between both
 
 var pixelDiff = function() {
 	canvg('under', $('#side-by-side div.before').html(), { ignoreMouse: true, ignoreAnimation: true, scaleWidth: 300, scaleHeight: 300 });
@@ -234,32 +219,8 @@ var pippinDiff = function() {
 	pippinUnder.blendOnto(pippinOver,'difference-pippin');
 }
 
-/* Rescale SVG giving the container selector with CSS3 transforms 
-var svgScale = function( selector ) {
-	var svgWidth = $( selector + ' svg').attr('width');
-	var svgHeight = $( selector + ' svg').attr('height');s
-
-	var svgSize = Math.max(svgWidth, svgHeight);
-	console.log('svgSize: ' +svgSize);
-
-	var containerWidth = $( selector ).width();
-	var containerHeight = $( selector ).height();
-
-	var containerSize = Math.min(containerWidth, containerHeight);
-	console.log('containerSize: ' + containerSize);
-
-	var scale = containerSize / svgSize;
-	var translation = (scale -1) * svgSize/2;
-
-	// Careful here. The order of transformations is important
-	if ( ($(selector).css('position') === 'absolute') && (navigator.userAgent.indexOf("WebKit") >= 0) ) {
-		// position: absolute; in parent container changes the translation origin in Chrome
-		$( selector + ' svg').css('transform', 'scale(' + scale + ')');
-	} else {
-		$( selector + ' svg').css('transform', 'translate(' + translation + 'px,' + translation + 'px) scale(' + scale + ')');
-	}
-}
-*/
+// *** Rescale SVG ***
+// according to container size
 
 var svgScale = function( el ) {
 	var jqo = $(el);
@@ -268,28 +229,27 @@ var svgScale = function( el ) {
 	var svgHeight = s.attr('height');
 
 	var svgSize = Math.max(svgWidth, svgHeight);
-	console.log('svgSize: ' +svgSize);
+	// console.log('svgSize: ' +svgSize);
 
 	var containerWidth = jqo.width();
 	var containerHeight = jqo.height();
 
 	var containerSize = Math.min(containerWidth, containerHeight);
-	console.log('containerSize: ' + containerSize);
+	// console.log('containerSize: ' + containerSize);
 
 	var scale = containerSize / svgSize;
 	var translation = (scale -1) * svgSize/2;
+	
 	/* Careful here. The order of transformations is important */
-	// if (jqo.hasClass('computed') != true) {
-		if ( (jqo.css('position') === 'absolute') && (navigator.userAgent.indexOf("WebKit") >= 0) ) {
-			/* don't know why but works. Maybe position absolute changes this */
-			s.css('transform', 'scale(' + scale + ')');
-		} else {
-			s.css('transform', 'translate(' + translation + 'px,' + translation + 'px) scale(' + scale + ')');
-		}
-	// }
-
-	// jqo.addClass('computed');
+	if ( (jqo.css('position') === 'absolute') && (navigator.userAgent.indexOf("WebKit") >= 0) ) {
+		/* don't know why but works. Maybe position absolute changes this */
+		s.css('transform', 'scale(' + scale + ')');
+	} else {
+		s.css('transform', 'translate(' + translation + 'px,' + translation + 'px) scale(' + scale + ')');
+	}
 }
+
+// *** Compare twe SVG trees ***
 
 var svgDiff = {};
 
@@ -307,47 +267,11 @@ var loadAndCompareSVG = function(){
 	} else {
 		$('#svg-diff .json').empty().append("No difference.");
 	}
-
-	/*
-	$.when(
-		$.ajax({
-		    url: url2svg1,
-		    dataType:"text"
-		}).done(function(xmlData){			
-			$('#svg-before').empty().append($(xmlData));
-		    jsonBefore = $.xmlToJSON(xmlData);
-		    svgScale('#svg-before');
-		}),
-		$.ajax({
-		    url: url2svg2,
-		    dataType:"text"
-		}).done(function(xmlData){
-			$('#svg-after').empty().append($(xmlData));
-		    jsonAfter = $.xmlToJSON(xmlData);
-		    svgScale('#svg-after');
-		})
-	).done(function(){
-		// Node Diff
-		// Convert each SVG to a JSON object and compare them
-		
-		svgDiff = jsondiffpatch.diff(jsonBefore, jsonAfter);
-		if (svgDiff != undefined) {
-			$('#svg-diff .json').empty().append(jsondiffpatch.html.diffToHtml(jsonBefore, jsonAfter, svgDiff));
-		} else {
-			$('#svg-diff .json').empty().append("No difference.");
-		}
-	});
-	*/
 }
 
-$(function(){
-	// UI: create tabs
-	// $( "#tabs" ).tabs();
+// *** INIT ALL ***
 
-	$('#tabs a').click(function (e) {
-    	e.preventDefault();
-    	$(this).tab('show');
-    });
+$(function(){
 
 	/*
 	// init before-after slider 
@@ -370,7 +294,8 @@ $(function(){
 		}
 	});
 	*/
-	/* place empty svg */
+
+	// place empty svg
 	$('div.before, div.after').each(function(){
 		$(this).empty().append($(emptySVG));
 		svgScale(this);
@@ -382,8 +307,10 @@ $(function(){
 		$('#toggle .after').css('visibility', 'visible');
 	});
 
+	/*
 	pixelDiff();
 	pippinDiff();
+	*/
 
 	/* Init Timeline */
 	timeline = new links.Timeline(document.getElementById('commit-timeline'));
@@ -412,10 +339,10 @@ $(function(){
 		//var json =  $.xmlToJSON(timelineData[i].content);
 		//var svguri = json.img['@src'];
 		
-    	$(".tab-content " + target).each(function(){
+    	$("#tabs " + target).each(function(){
     		$(this).empty().append($(svg));
 			svgScale(this);
-			console.log("replaced");
+			// console.log("replaced");
     	});
 		
     	if (target === 'div.before') {
@@ -427,17 +354,17 @@ $(function(){
     		$('.timeline-event-selected').addClass('th-after');
     		target = 'div.before';
     	}
-    	/*
+    	
+    	
     	pixelDiff();
     	pippinDiff();
+    	
     	loadAndCompareSVG();
-		*/
+		
     }
-
 	links.events.addListener(timeline, "select", onSelect);
 
 	// SVG diff 
-	/*
 	loadAndCompareSVG();
-	*/
-})
+	
+});
