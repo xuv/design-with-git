@@ -249,14 +249,19 @@ var svgScale = function( el ) {
 	}
 }
 
-// *** Compare twe SVG trees ***
+// *** Compare two SVG trees ***
 
 var svgDiff = {};
 
+jsondiffpatch.config.objectHash = function(obj) {
+	return obj._id || obj.id || obj.name || JSON.stringify(obj);
+};
+
 var loadAndCompareSVG = function(){
+
 	var jsonBefore, jsonAfter;
-	var svg1 = $('#side-by-side div.before').html();
-	var svg2 = $('#side-by-side div.after').html();
+	var svg1 = $('#side-by-side .before').html();
+	var svg2 = $('#side-by-side .after').html();
 	
 	jsonBefore = $.xmlToJSON(svg1);
 	jsonAfter = $.xmlToJSON(svg2);
@@ -265,35 +270,96 @@ var loadAndCompareSVG = function(){
 	if (svgDiff != undefined) {
 		$('#svg-diff .json').empty().append(jsondiffpatch.html.diffToHtml(jsonBefore, jsonAfter, svgDiff));
 	} else {
-		$('#svg-diff .json').empty().append("No difference.");
+		$('#svg-diff .json').empty().append("There is <strong>no difference</strong> between these two SVG trees. You silly :)");
 	}
+
+	$('#svg-before').hide();
+	hideDiff('#svg-before');
+	$('#svg-after').hide();
+	hideDiff('#svg-after');
+	
+	$('.jsondiffpatch-deleted, jsondiffpatch-modified-original').mouseenter(function(){
+		var id1 = []; // empty jQuery object
+		$(this).find('span.jsondiffpatch-property-name').each(function(){
+			if ($(this).text() === '@id') {
+				var id = $(this).parent().children('p').text();
+				id = id.slice(1, id.lastIndexOf('"')); // clean up the id from the quotes
+				id1.push(id);
+			}
+		});
+		if( id1 != []){
+			id1.forEach(function(elID){
+				console.log(elID);
+				showDiff('#svg-before', '#' + elID);
+			});
+		};
+		$('#svg-before').show();
+	}).mouseleave(function(){
+		$('#svg-before').hide();
+		hideDiff('#svg-before');
+	});
+	
+	$('.jsondiffpatch-added, .jsondiffpatch-modified-new').mouseenter(function(){
+		var id2 = []; // empty jQuery object
+		$(this).find('span.jsondiffpatch-property-name').each(function(){
+			if ($(this).text() === '@id') {
+				var id = $(this).parent().children('p').text();
+				id = id.slice(1, id.lastIndexOf('"')); // clean up the id from the quotes
+				id2.push(id);
+			}
+		});
+		if( id2 != []){
+			id2.forEach(function(elID){
+				console.log(elID);
+				showDiff('#svg-after', '#' + elID);
+			});
+		};
+		$('#svg-after').show();
+	}).mouseleave(function(){
+		$('#svg-after').hide();
+		hideDiff('#svg-after');
+	});
 }
+
+// *** Diff roll over visibility ***
+
+var showDiff = function( id, elID ){
+	var svgEl = $(id).find(elID);
+	svgEl.css('visibility', 'visible');
+	svgEl.find('*').css('visibility', 'visible');
+};
+
+var hideDiff = function( id ){
+	$( id ).find('path').css('visibility', 'hidden');
+};
+
+
+
 
 // *** INIT ALL ***
 
 $(function(){
 
-	/*
-	// init before-after slider 
-	$( "#before-after .slider" ).slider({
+	// Sliders
+	$('#before-after input').slider({
 		min : 0,
 		max : 300,
-		value : 150,  
-		slide: function( event, ui ) {
-			$('#before-after #mask').css('width', ui.value);
-		}
-	});
-	
-	// init opacity slider 
-	$( "#opacity .slider" ).slider({
+		step : 1,
+		value : 150,
+		tooltip : 'hide'
+	}).on('slide', function(ev){
+    	$('#before-after #mask').css('width', $(this).slider().data('slider').getValue());
+    });
+
+	$('#opacity input').slider({
 		min : 0,
-		max : 100,
-		value : 50,  
-		slide: function( event, ui ) {
-			$('#opacity .after').css('opacity', ui.value/100);
-		}
-	});
-	*/
+		max : 1,
+		step : 0.01,
+		value : 0.5,
+		tooltip : 'hide'
+	}).on('slide', function(ev){
+    	$('#opacity .after').css('opacity', $(this).slider().data('slider').getValue());
+    });
 
 	// place empty svg
 	$('div.before, div.after').each(function(){
@@ -302,15 +368,15 @@ $(function(){
 	});
 
 	$( "#toggle" ).mouseenter(function(){
-		$('#toggle .after').css('visibility', 'hidden');
+		$('#toggle .after').css('display', 'none');
 	}).mouseleave(function(){
-		$('#toggle .after').css('visibility', 'visible');
+		$('#toggle .after').css('display', 'inline');
 	});
 
-	/*
+	
 	pixelDiff();
 	pippinDiff();
-	*/
+	
 
 	/* Init Timeline */
 	timeline = new links.Timeline(document.getElementById('commit-timeline'));
@@ -339,7 +405,7 @@ $(function(){
 		//var json =  $.xmlToJSON(timelineData[i].content);
 		//var svguri = json.img['@src'];
 		
-    	$("#tabs " + target).each(function(){
+    	$(target).each(function(){
     		$(this).empty().append($(svg));
 			svgScale(this);
 			// console.log("replaced");
@@ -366,5 +432,14 @@ $(function(){
 
 	// SVG diff 
 	loadAndCompareSVG();
+
+	// Fill the About modal
+	var converter = new Markdown.Converter();
+    $.ajax({
+    	url: "README.md"
+    }).done(function(data){
+    	console.log(data);
+    	$('#about .modal-body').empty().html(converter.makeHtml(data));
+    });
 	
 });

@@ -1,26 +1,29 @@
 body, html {
-	font-size: 12px;
+	/*font-size: 12px;*/
 	/*background: red;*/
 }
 
-
-#tabs {
-	width: 100%;
-	height: 400px;
-}
-
-
+/*
 #file>div {
 	margin: 25px auto;
 }
-
+*/
 
 .before,
-.after {
+.after,
+canvas {
 	width: 300px;
 	height: 300px;
 	background-color: #F0F0F0;
 	background-image: url(../img/transparent.png);
+}
+
+.before {
+	border: 1px solid red;
+}
+
+.after {
+	border: 1px solid green;
 }
 
 
@@ -28,9 +31,9 @@ body, html {
 
 #before-after {
 	width: 300px;
-	height: 300px;
+	/*height: 300px;*/
 	position: relative;
-	top: 25px;
+	/*top: 25px;*/
 	margin: auto;
 }
 
@@ -50,33 +53,22 @@ body, html {
 	z-index: 100;
 }
 
-.slider {
-	top: 320px;
-}
-
-/* Side by side */
-#side-by-side {
-	width: 900px;
-	height: 300px;
-	margin: 25px auto;
-}
-
 #side-by-side .before,
 #side-by-side .after {
 	float: left;
-	margin-left: 100px;
+	margin-left: 125px;
 }
 
-/* opacity slider + toggle + blend diff */
-#opacity,
-#toggle,
-#blend-diff,
-#pippin-diff {
-	width: 300px;
-	height: 300px;
-	position: relative; 
-	top: 25px;
+.center {
+	position: relative;
 	margin: auto;
+	min-height: 300px;
+	display: block;
+}
+
+.slider {
+	margin-top: 310px;
+	width: 290px;
 }
 
 #opacity .before,
@@ -84,12 +76,14 @@ body, html {
 #toggle .before,
 #toggle .after,
 #blend-diff .before,
-#blend-diff .after {
+#blend-diff .after,
+#svg-diff .before,
+#svg-diff .after {
 	position: absolute;
 	top: 0;
 	left: 0;
-	/*overflow: hidden;*/
-	border: solid 1px #808080;
+	width: 300px;
+	height: 300px;
 }
 
 #opacity .after {
@@ -100,59 +94,50 @@ body, html {
 	visibility: visible;
 }
 
-#blend-diff .before,
-#blend-diff .after {
-	display: none;
-}
-
 #blend-diff #under,
 #blend-diff #over,
 #pippin-diff #pippinUnder,
 #pippin-diff #pippinOver {
+	position: absolute;
+	top: 0;
+	left: 0;
 	width: 300px;
 	height: 300px;
 }
 
+#blend-diff .center,
+#pippin-diff .center {
+	width: 300px;
+	height: 300px;
+	overflow: hidden;
+}
 
 #blend-diff #under,
-#blend-diff #over,
+/*#blend-diff #over,*/
 #pippin-diff #pippinUnder {
 	display: none;
 }
 
+
 #svg-diff .json {
-	border: solid 1px #CCC;
-	width: 500px;
-	height: 300px;
 	overflow: auto;
-	margin: 25px 10px 0 100px;
+	height: 300px;
+	margin-left: 0px;
+}
+
+#svg-diff li {
+	line-height: 0.9em;
+}
+
+#svg-diff ul,
+#svg-diff ol {
+	margin: 0;
 }
 
 #svg-diff .jsondiffpatch-unchanged {
 	display: none;
 }
 
-#svg-diff .before,
-#svg-diff .after {
-	position: absolute;
-	top: 65px;
-	left: 625px;
-	margin: 0 0 0 10px;
-	border: solid 1px #808080;
-}
-
-#svg-before, #svg-after {
-	width: 300px;
-	height: 300px;
-}
-
-
-/* reset jquery ui styles */
-.ui-tabs .ui-tabs-panel { padding: 0; }
-.ui-widget-content { 
-	border: none;
-	background: transparent;
-}
 
 
 /* reset timeline styles */
@@ -160,7 +145,7 @@ body, html {
 	font-family: sans-serif;
 }
 
- .thumb .svg-thumb {
+.thumb .svg-thumb {
  	height: 40px;
  	width: 40px;
  	border: solid 1px #97B0F8; /* color taken from time-line-event border */
@@ -181,8 +166,10 @@ div.timeline-event-selected {
 .th-after img { border: solid 1px #0F0; }
 .th-after div.timeline-event-dot { border-color: #0F0; }
 
-/*
-.thumb span {
-	display: none;
+#footer{
+	background-color: #F5F5F5;
+	border-top: 1px solid #E5E5E5;
+	margin-top: 70px;
+	padding: 30px 0;
+	text-align: center;
 }
-*/

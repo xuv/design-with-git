@@ -95,7 +95,7 @@ if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype.getIma
 	                  if (squared_diff > 0)
 	                    {
 	                    	// black changed pixels are slightly red
-                           dst[px] = ((gray + 32) * 255) / (255-32);
+                           dst[px] = ((gray + 50) * 255) / (255-50);
                            dst[px+1] = 0;
                            dst[px+2] = 0;
 	                    }

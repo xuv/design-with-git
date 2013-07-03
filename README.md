@@ -1,14 +1,21 @@
-Design with Git @ Medialab Prado
-================================
+Design with Git
+===============
 
-From the 15th to the 27th of April 2013, during Interactivos?'13.
+"Design with Git" is a tool to help graphic designers visualize the differences between two versions of the same SVG file. The SVG files are grabbed from a github repository and their commit history displayed on a timeline. After selecting two versions, the user is able to compare them in different ways:
+- viewing them **Side by side**
+- one on top of the other with a sliding **mask**, an **opacity** slider or by **toggling** rapidly between both
+- viewing the **pixel difference** between both SVG (Classic style: black meaning there is no difference. Pippin's style: where changed pixels are marked in bright red) 
+- by displaying and navigating the differences between the SVG (XML) trees
 
-Working on ways to visualize differences between svg files versioned in a git repository.
+This tool is to be understood as a "proof of concept" and runs on client-side in the browser (tested in Firefox and Chrome). It is presented here to encourage discussion about the usefulness of such tools for graphic designers and to be extensively tested with your own SVG repositories.
 
-[View a static version of the project](http://xuv.github.io/design-with-git/static-svg-diff/) (not yet pulling data from a git repo. just dummy files.)
+All suggestions, remarks and/or improvements are more than welcome.
 
-Notes about the [daily works at Medialab Prado](http://w.xuv.be/projects/design_with_git/medialab_prado_log)  
-About the project: http://w.xuv.be/projects/design_with_git 
+This project has been started at [Medialab-Prado](http://medialab-prado.es/) between the 15th and the 27th of April 2013, during Interactivos?'13.
+
+[Try it online here](http://xuv.github.io/design-with-git)
+
+Extensive notes about the project: http://w.xuv.be/projects/design_with_git 
 
 Credits:
 --------
