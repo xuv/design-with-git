@@ -90,12 +90,42 @@ var options = {
 	groupsOnRight: false
 };
 
+
+// fetch svg files
+var getSVGFiles = function( content ) {
+	if (( content.type === "file" ) && ( content.name.substring(content.name.lastIndexOf(".")) === '.svg' )) {
+		$("#filesList").append("<input type=\"button\" value=\"Get File\" " + "onclick=\"getFile('" + content.name +  "')\" /> " + content.name + "<br>");
+		files.push(content);
+		/*
+		} else {
+			
+			for(i = 0; i < files.length; i++){
+				// console.log
+				if (svgFile.name != files[i].name){
+					files.push(svgFile);
+					$("#filesList").append("<input type=\"button\" value=\"Get File\" " + "onclick=\"getFile('" + svgFile.name +  "')\" /> " + svgFile.name + "<br>");
+				}
+			}
+		
+		}*/
+	} else if ( content.type === "dir" ) {
+		console.log(content.name);
+		content.fetchContents(function (err,response) {
+			if(err) { throw "outch dir..." }
+			response.eachContent(function (dirContent) {
+				getSVGFiles( dirContent );
+			});
+		})
+	}
+
+}
+
 // fetch repository
 var getRep = function(){
 	var ghUser = new Gh3.User($("#userName")[0].value );
 	var ghRepository = new Gh3.Repository($("#repositoryName")[0].value, ghUser);
-	var filesList = $("#filesList");
-	filesList.empty();
+	$("#filesList").empty();
+	files = [];
 	ghRepository.fetch(function (err, res) {
 		ghRepository.fetchBranches(function (err, res) {
 	  		res.eachBranch( function(branch){
@@ -103,29 +133,15 @@ var getRep = function(){
 	  			branch.fetchContents(function (err, res) {
 					if(err) { throw "outch ..." }
 					res.eachContent(function (content) {
-						if (( content.type === "file" ) &&
-						( content.name.substring(content.name.lastIndexOf(".")) === '.svg' )) {
-							var svgFile = content;
-							// console.log(files.length);
-							if (files.length === 0 ) {
-								files.push(svgFile);
-								filesList.append("<input type=\"button\" value=\"Get File\" " + "onclick=\"getFile('" + svgFile.name +  "')\" /> " + svgFile.name + "<br>");
-							} else {
-								for(i = 0; i < files.length; i++){
-									// console.log
-									if (svgFile.name != files[i].name){
-										files.push(svgFile);
-										filesList.append("<input type=\"button\" value=\"Get File\" " + "onclick=\"getFile('" + svgFile.name +  "')\" /> " + svgFile.name + "<br>");
-									}
-								}
-							}
-						}
+						getSVGFiles( content );
 					});
 				});
 			});
 		});
 	});
 };
+
+
 
 var getFileCommitHistoryData = function( svgFile ) {
 
