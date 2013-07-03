@@ -109,7 +109,7 @@ var getSVGFiles = function( content ) {
 		
 		}*/
 	} else if ( content.type === "dir" ) {
-		console.log(content.name);
+		// console.log(content.name);
 		content.fetchContents(function (err,response) {
 			if(err) { throw "outch dir..." }
 			response.eachContent(function (dirContent) {
@@ -182,9 +182,9 @@ var getFileCommitHistoryData = function( svgFile ) {
         		});
 				// console.log(data.commit.author.name, data.commit.message, data.commit.author.date, data.files[0].raw_url );
 				jqxhr.done(function(){
-					console.log('jqxhr-done');
+					// console.log('jqxhr-done');
 					$('.svg-thumb').each(function(i, el){
-						console.log('scaling');
+						// console.log('scaling');
 						svgScale(el);
 					});
 					// Seems the elements have to be visible to be resized as svg in the timeline. 
@@ -305,7 +305,7 @@ var loadAndCompareSVG = function(){
 		});
 		if( id1 != []){
 			id1.forEach(function(elID){
-				console.log(elID);
+				// console.log(elID);
 				showDiff('#svg-before', '#' + elID);
 			});
 		};
@@ -326,7 +326,7 @@ var loadAndCompareSVG = function(){
 		});
 		if( id2 != []){
 			id2.forEach(function(elID){
-				console.log(elID);
+				// console.log(elID);
 				showDiff('#svg-after', '#' + elID);
 			});
 		};
@@ -454,7 +454,7 @@ $(function(){
     $.ajax({
     	url: "README.md"
     }).done(function(data){
-    	console.log(data);
+    	// console.log(data);
     	$('#about .modal-body').empty().html(converter.makeHtml(data));
     });
 	
